@@ -12,47 +12,63 @@ cleanedInput = rawInput.split("\r\n").map((row) => row.split(""));
 // PART 1
 
 const numberOfXMASAt = (grid, y, x) => {
-  let result = 0;
+  let result = 8;
   const xmas = "XMAS";
   //forward
   for (let i = 1; i < xmas.length; i++) {
-    if (grid[y]?.[x + i] !== xmas[i]) break;
-    if (i === xmas.length - 1) result++;
+    if (grid[y]?.[x + i] !== xmas[i]) {
+      result--;
+      break;
+    }
   }
   //backwards
   for (let i = 1; i < xmas.length; i++) {
-    if (grid[y]?.[x - i] !== xmas[i]) break;
-    if (i === xmas.length - 1) result++;
+    if (grid[y]?.[x - i] !== xmas[i]) {
+      result--;
+      break;
+    }
   }
   //vertical - forwards
   for (let i = 1; i < xmas.length; i++) {
-    if (grid[y + i]?.[x] !== xmas[i]) break;
-    if (i === xmas.length - 1) result++;
+    if (grid[y + i]?.[x] !== xmas[i]) {
+      result--;
+      break;
+    }
   }
   //vertical - backWards
   for (let i = 1; i < xmas.length; i++) {
-    if (grid[y - i]?.[x] !== xmas[i]) break;
-    if (i === xmas.length - 1) result++;
+    if (grid[y - i]?.[x] !== xmas[i]) {
+      result--;
+      break;
+    }
   }
   //diag up-left
   for (let i = 1; i < xmas.length; i++) {
-    if (grid[y - i]?.[x - i] !== xmas[i]) break;
-    if (i === xmas.length - 1) result++;
+    if (grid[y - i]?.[x - i] !== xmas[i]) {
+      result--;
+      break;
+    }
   }
   //diag up-right
   for (let i = 1; i < xmas.length; i++) {
-    if (grid[y - i]?.[x + i] !== xmas[i]) break;
-    if (i === xmas.length - 1) result++;
+    if (grid[y - i]?.[x + i] !== xmas[i]) {
+      result--;
+      break;
+    }
   }
   //diag down-right
   for (let i = 1; i < xmas.length; i++) {
-    if (grid[y + i]?.[x + i] !== xmas[i]) break;
-    if (i === xmas.length - 1) result++;
+    if (grid[y + i]?.[x + i] !== xmas[i]) {
+      result--;
+      break;
+    }
   }
   //diag down-left
   for (let i = 1; i < xmas.length; i++) {
-    if (grid[y + i]?.[x - i] !== xmas[i]) break;
-    if (i === xmas.length - 1) result++;
+    if (grid[y + i]?.[x - i] !== xmas[i]) {
+      result--;
+      break;
+    }
   }
   return result;
 };
