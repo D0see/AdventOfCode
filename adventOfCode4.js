@@ -1,3 +1,4 @@
+const { log } = require("console");
 const fs = require("fs");
 
 // INTUT GATHERING & CLEANING
@@ -7,6 +8,8 @@ const rawInput = fs.readFileSync("./adventOfCode4Input.txt", {
 });
 
 cleanedInput = rawInput.split("\r\n").map((row) => row.split(""));
+
+// PART 1
 
 const numberOfXMASAt = (grid, y, x) => {
   let result = 0;
@@ -82,3 +85,30 @@ for (let y = 0; y < cleanedInput.length; y++) {
 }
 
 console.log(result);
+
+// PART2
+
+const isCenterOfXMAS = (grid, y, x) => {
+  return (
+    //diag up-left down-right is valid
+    ["S", "M"].includes(grid[y + 1][x + 1]) &&
+    ["S", "M"].includes(grid[y - 1][x - 1]) &&
+    grid[y - 1][x - 1] !== grid[y + 1][x + 1] &&
+    //diag up-right down-left is valid
+    ["S", "M"].includes(grid[y - 1][x + 1]) &&
+    ["S", "M"].includes(grid[y + 1][x - 1]) &&
+    grid[y - 1][x + 1] !== grid[y + 1][x - 1]
+  );
+};
+
+let result2 = 0;
+
+// skips borders
+for (let y = 1; y < cleanedInput.length - 1; y++) {
+  for (let x = 1; x < cleanedInput[0].length - 1; x++) {
+    if (cleanedInput[y][x] === "A")
+      result2 += isCenterOfXMAS(cleanedInput, y, x) ? 1 : 0;
+  }
+}
+
+console.log(result2);

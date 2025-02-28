@@ -60,11 +60,4 @@ levels.forEach((level) => {
   if (levelIsSafeWithDampener(level)) result2++;
 });
 
-const level = [1, 5, 2, 6, 3];
-
-console.log(levelIsSafe([6, 2, 3, 4, 5]));
-console.log(levelIsSafeWithDampener([6, 2, 3, 4, 5]));
-console.log(levelIsSafe([1, 5, 3, 4, 2, 6]));
-console.log(levelIsSafeWithDampener([1, 5, 3, 4, 2, 6]));
-
 console.log(result2);
