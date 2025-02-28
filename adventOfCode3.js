@@ -55,7 +55,9 @@ let result2 = 0;
 
 matches2.forEach((match) => {
   if (
-    skipRanges.some((range) => range[0] < match.index && match.index < range[1])
+    !skipRanges.some(
+      (range) => range[0] < match.index && match.index < range[1]
+    )
   )
     result2 += eval(match.func);
 });
