@@ -58,30 +58,25 @@ console.log(result);
 const invalidOrders = orders.filter(order => !isValidOrder(rulesObj, order));
 
 const fixOrder = (rulesObj, order) => {
-  for (let i = 0; i < order.length; i++) {
-    const orderSlice = order.slice(0, i + 1);
+  let tempOrder = [...order];
+  for (let i = 0; i < tempOrder.length; i++) {
+    const orderSlice = tempOrder.slice(0, i + 1);
     if (isValidOrder(rulesObj, orderSlice)) continue;
-    const badPage = order[i];
+    const badPage = tempOrder[i];
     for (let j = orderSlice.length - 2; j >= 0; j--) {
       const temp = [...orderSlice].slice(0, orderSlice.length - 1);
       temp.splice(j, 0, badPage);
       if (!isValidOrder(rulesObj, temp)) continue;
-      order = temp.slice(0, i + 1).concat(order.slice(i + 1));
+      tempOrder = temp.slice(0, i + 1).concat(tempOrder.slice(i + 1));
       break;
     }
   }
-  return order;
+  return tempOrder;
 }
-
-//weird side effect with for invalidOrders.map but im too tired for this right now
-// invalidOrders.map(order => (fixOrder(rulesObj, order));
-
-let fixed = [];
-invalidOrders.forEach(order => fixed.push(fixOrder(rulesObj, order)));
 
 let result2 = 0;
 
-fixed.forEach((order) => {
+invalidOrders.map(order => fixOrder(rulesObj, order)).forEach((order) => {
   if (isValidOrder(rulesObj, order)) result2 += parseInt(getMiddlePage(order));
 });
 
