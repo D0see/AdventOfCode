@@ -6,7 +6,7 @@ const rawInput = fs.readFileSync("./adventOfCode6Input.txt", {
   encoding: "utf-8",
 });
 
-let matrix = rawInput.split("\r\n").map((line) => line.split(""));
+let matrix = JSON.stringify(rawInput.split("\r\n").map((line) => line.split("")));
 
 const orientations = {
   "^": "UP",
@@ -62,27 +62,28 @@ const turnRight = (matrix, orientations, position) => {
 };
 
 //GameLoop
-let currGuardPos = getGuardPosition(matrix, orientations);
+const part1Matrix = JSON.parse(matrix);
+let currGuardPos = getGuardPosition(part1Matrix, orientations);
 while (true) {
-  const nextPos = getNextPosition(matrix, orientations, currGuardPos);
+  const nextPos = getNextPosition(part1Matrix, orientations, currGuardPos);
   //Check if next position is out of the matrix
-  if (!matrix[nextPos[0]] || !matrix[0][nextPos[1]]) {
-    markAsVisited(matrix, currGuardPos);
+  if (!part1Matrix[nextPos[0]] || !part1Matrix[0][nextPos[1]]) {
+    markAsVisited(part1Matrix, currGuardPos);
     break;
   }
   //Check if wall -> turn right -> continue;
-  if (matrix[nextPos[0]][nextPos[1]] === "#") {
-    turnRight(matrix, orientations, currGuardPos);
+  if (part1Matrix[nextPos[0]][nextPos[1]] === "#") {
+    turnRight(part1Matrix, orientations, currGuardPos);
     continue;
   }
 
   //Moves the guard to the next square
-  matrix[nextPos[0]][nextPos[1]] = matrix[currGuardPos[0]][currGuardPos[1]];
-  matrix[currGuardPos[0]][currGuardPos[1]] = "X";
+  part1Matrix[nextPos[0]][nextPos[1]] = part1Matrix[currGuardPos[0]][currGuardPos[1]];
+  markAsVisited(part1Matrix, currGuardPos);
   currGuardPos = nextPos;
 }
 
-const result = matrix
+const result = part1Matrix
   .flat()
   .reduce((acc, cell) => (acc += cell === "X" ? 1 : 0), 0);
 
@@ -92,6 +93,43 @@ console.log(result);
 
 /*
 
-Here i need an object with key Y-X position with value an orientationSymbol hashmap to check against
+SUPER UN-OPTIMIZED
 
 */
+
+const blockingCauseLoop = (matrix, position) => {
+  matrix[position[0]][position[1]] = '#';
+
+  let currGuardPos = getGuardPosition(matrix, orientations);
+  const orientationsAtPos = {};
+  while (true) {
+    orientationsAtPos[`${currGuardPos[0]}-${currGuardPos[1]}`] ?
+    orientationsAtPos[`${currGuardPos[0]}-${currGuardPos[1]}`][[matrix[currGuardPos[0]][currGuardPos[1]]]] = true :
+    orientationsAtPos[`${currGuardPos[0]}-${currGuardPos[1]}`] = {[matrix[currGuardPos[0]][currGuardPos[1]]] : true};
+
+    const nextPos = getNextPosition(matrix, orientations, currGuardPos);
+    //Check if next position is out of the matrix
+    if (!matrix[nextPos[0]] || !matrix[0][nextPos[1]]) return false;
+
+    //Check if wall -> turn right -> continue;
+    if (matrix[nextPos[0]][nextPos[1]] === "#") {
+      turnRight(matrix, orientations, currGuardPos);
+      continue;
+    }
+
+    //Moves the guard to the next square
+    if (orientationsAtPos[`${nextPos[0]}-${nextPos[1]}`]?.[matrix[currGuardPos[0]][currGuardPos[1]]]) return true;
+    matrix[nextPos[0]][nextPos[1]] = matrix[currGuardPos[0]][currGuardPos[1]];
+    currGuardPos = nextPos;
+  }
+}
+
+const part2Matrix = JSON.parse(matrix);
+let result2 = 0;
+for (let y = 0; y < part2Matrix.length; y++) {
+  for (let x = 0; x < part2Matrix[0].length; x++) {
+    if (part2Matrix[y][x] === '.' && blockingCauseLoop(JSON.parse(matrix), [y, x])) result2++;
+  }
+}
+
+console.log(result2);
