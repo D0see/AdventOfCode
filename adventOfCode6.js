@@ -15,8 +15,6 @@ const orientations = {
   "<": "LEFT",
 };
 
-console.log(Object.keys(orientations));
-
 const getGuardPosition = (matrix, orientations) => {
   for (let y = 0; y < matrix.length; y++) {
     for (let x = 0; x < matrix[0].length; x++) {
@@ -69,7 +67,6 @@ while (true) {
   const nextPos = getNextPosition(matrix, orientations, currGuardPos);
   //Check if next position is out of the matrix
   if (!matrix[nextPos[0]] || !matrix[0][nextPos[1]]) {
-    console.log("leaving the matrix");
     markAsVisited(matrix, currGuardPos);
     break;
   }
@@ -90,3 +87,11 @@ const result = matrix
   .reduce((acc, cell) => (acc += cell === "X" ? 1 : 0), 0);
 
 console.log(result);
+
+//PART 2
+
+/*
+
+Here i need an object with key Y-X position with value an orientationSymbol hashmap to check against
+
+*/
