@@ -26,10 +26,8 @@ const hasAWorkingPerm = (
   currPerm = undefined
 ) => {
   if (result[0]) return;
-  if (currNumIndex === operation.numbers.length) {
-    if (currPerm === operation.result) result[0] = true;
-    return;
-  }
+  if (currNumIndex === operation.numbers.length)
+    return (result[0] = currPerm === operation.result);
   hasAWorkingPerm(
     operation,
     result,
@@ -62,10 +60,8 @@ const hasAWorkingPerm2 = (
   currPerm = undefined
 ) => {
   if (result[0]) return;
-  if (currNumIndex === operation.numbers.length) {
-    if (currPerm === operation.result) result[0] = true;
-    return;
-  }
+  if (currNumIndex === operation.numbers.length)
+    return (result[0] = currPerm === operation.result);
   hasAWorkingPerm2(
     operation,
     result,
