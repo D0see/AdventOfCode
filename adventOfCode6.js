@@ -63,7 +63,9 @@ const turnRight = (matrix, orientations, position) => {
 
 //GameLoop
 const part1Matrix = JSON.parse(matrix);
-let currGuardPos = getGuardPosition(part1Matrix, orientations);
+const intialGuardPos = getGuardPosition(part1Matrix, orientations);
+const initialOrientation = part1Matrix[intialGuardPos[0]][intialGuardPos[1]];
+let currGuardPos = [...intialGuardPos];
 while (true) {
   const nextPos = getNextPosition(part1Matrix, orientations, currGuardPos);
   //Check if next position is out of the matrix
@@ -90,12 +92,6 @@ const result = part1Matrix
 console.log(result);
 
 //PART 2
-
-/*
-
-SUPER UN-OPTIMIZED
-
-*/
 
 const blockingCauseLoop = (matrix, position) => {
   matrix[position[0]][position[1]] = '#';
@@ -124,12 +120,22 @@ const blockingCauseLoop = (matrix, position) => {
   }
 }
 
-const part2Matrix = JSON.parse(matrix);
+//reuses part 1 matrix to prune for traversed positions
+//re-draw the guard on his initial starting location
+part1Matrix[intialGuardPos[0]][intialGuardPos[1]] = initialOrientation;
+
 let result2 = 0;
-for (let y = 0; y < part2Matrix.length; y++) {
-  for (let x = 0; x < part2Matrix[0].length; x++) {
-    if (part2Matrix[y][x] === '.' && blockingCauseLoop(JSON.parse(matrix), [y, x])) result2++;
+for (let y = 0; y < part1Matrix.length; y++) {
+  for (let x = 0; x < part1Matrix[0].length; x++) {
+    if (part1Matrix[y][x] === 'X' && blockingCauseLoop(JSON.parse(matrix), [y, x])) result2++;
   }
 }
 
 console.log(result2);
+
+/* NOTES
+
+For part 2 the Pos -> Orientation hashmap might not be useful for edgecase handling and saving the position directly on the matrix will lead
+to massive performance gains.
+
+*/
