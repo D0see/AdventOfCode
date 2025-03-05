@@ -21,7 +21,7 @@ const operations = rawInput
 
 const hasAWorkingPerm = (
   operation,
-  result,
+  result = [false],
   currNumIndex = 0,
   currPerm = undefined
 ) => {
@@ -42,15 +42,13 @@ const hasAWorkingPerm = (
     currNumIndex + 1,
     (currPerm === undefined ? 1 : currPerm) * operation.numbers[currNumIndex]
   );
+  return result[0];
 };
 
 let result = 0;
 
-let hasAWorkingPermResultCatcher;
 operations.forEach((operation) => {
-  hasAWorkingPermResultCatcher = [false];
-  hasAWorkingPerm(operation, hasAWorkingPermResultCatcher);
-  if (hasAWorkingPermResultCatcher[0]) result += operation.result;
+  if (hasAWorkingPerm(operation)) result += operation.result;
 });
 
 console.log(result);
@@ -59,7 +57,7 @@ console.log(result);
 
 const hasAWorkingPerm2 = (
   operation,
-  result,
+  result = [false],
   currNumIndex = 0,
   currPerm = undefined
 ) => {
@@ -89,15 +87,13 @@ const hasAWorkingPerm2 = (
         `${operation.numbers[currNumIndex]}`
     )
   );
+  return result[0];
 };
 
 let result2 = 0;
 
-let hasAWorkingPerm2ResultCatcher;
 operations.forEach((operation) => {
-  hasAWorkingPerm2ResultCatcher = [false];
-  hasAWorkingPerm2(operation, hasAWorkingPerm2ResultCatcher);
-  if (hasAWorkingPerm2ResultCatcher[0]) result2 += operation.result;
+  if (hasAWorkingPerm2(operation)) result2 += operation.result;
 });
 
 console.log(result2);
