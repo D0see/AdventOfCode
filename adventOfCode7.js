@@ -54,3 +54,50 @@ operations.forEach((operation) => {
 });
 
 console.log(result);
+
+// PART 2
+
+const hasAWorkingPerm2 = (
+  operation,
+  result,
+  currNumIndex = 0,
+  currPerm = undefined
+) => {
+  if (result[0]) return;
+  if (currNumIndex === operation.numbers.length) {
+    if (currPerm === operation.result) result[0] = true;
+    return;
+  }
+  hasAWorkingPerm2(
+    operation,
+    result,
+    currNumIndex + 1,
+    (currPerm === undefined ? 0 : currPerm) + operation.numbers[currNumIndex]
+  );
+  hasAWorkingPerm2(
+    operation,
+    result,
+    currNumIndex + 1,
+    (currPerm === undefined ? 1 : currPerm) * operation.numbers[currNumIndex]
+  );
+  hasAWorkingPerm2(
+    operation,
+    result,
+    currNumIndex + 1,
+    parseInt(
+      (currPerm === undefined ? "" : `${currPerm}`) +
+        `${operation.numbers[currNumIndex]}`
+    )
+  );
+};
+
+let result2 = 0;
+
+let hasAWorkingPerm2ResultCatcher;
+operations.forEach((operation) => {
+  hasAWorkingPerm2ResultCatcher = [false];
+  hasAWorkingPerm2(operation, hasAWorkingPerm2ResultCatcher);
+  if (hasAWorkingPerm2ResultCatcher[0]) result2 += operation.result;
+});
+
+console.log(result2);
