@@ -67,3 +67,80 @@ for (const key of Object.keys(antennaPos)) {
 
 const result = Object.keys(antinodeMap).length;
 console.log(result);
+
+//PART 2
+
+const gCD = (a, b) => {
+  if (b > a) return gCD(b, a);
+  if (!(a % b)) return b;
+  return gCD(b, a % b);
+};
+
+const getAntinodesPositions = (matrix, antenna1, antenna2) => {
+  const result = [];
+  let xDiff = antenna1.x - antenna2.x;
+  let yDiff = antenna1.y - antenna2.y;
+  const gCommonDenominator = gCD(Math.abs(xDiff), Math.abs(yDiff));
+  xDiff /= gCommonDenominator;
+  yDiff /= gCommonDenominator;
+
+  let offset = 0;
+  while (true) {
+    const currXPos = antenna1.x + xDiff * offset;
+    const currYPos = antenna1.y + yDiff * offset;
+    if (
+      currYPos >= matrix.length ||
+      currYPos < 0 ||
+      currXPos >= matrix[0].length ||
+      currXPos < 0
+    ) {
+      break;
+    }
+    result.push({
+      x: currXPos,
+      y: currYPos,
+    });
+    offset++;
+  }
+  return result;
+};
+
+const getAntinodesFor2 = (matrix, antennasPos) => {
+  const resultingPositions = [];
+  for (let i = 0; i < antennasPos.length; i++) {
+    const currAntennaPos = {
+      y: parseInt(antennasPos[i].split("-")[0]),
+      x: parseInt(antennasPos[i].split("-")[1]),
+    };
+    for (let j = 0; j < antennasPos.length; j++) {
+      if (i === j) continue;
+      const currAntennaPos2 = {
+        y: parseInt(antennasPos[j].split("-")[0]),
+        x: parseInt(antennasPos[j].split("-")[1]),
+      };
+      const antinodesPos = getAntinodesPositions(
+        matrix,
+        currAntennaPos,
+        currAntennaPos2
+      );
+      resultingPositions.push(...antinodesPos);
+    }
+  }
+  return resultingPositions;
+};
+
+// since antinodes can share a position with an antenna we collect them in a position -> antinodeSymbol map
+
+const antinodeMap2 = {};
+
+for (const key of Object.keys(antennaPos)) {
+  const antinodesPositions = getAntinodesFor2(matrix, antennaPos[key]);
+  antinodesPositions.forEach((position) =>
+    antinodeMap2[`${position.y}-${position.x}`]
+      ? antinodeMap2[`${position.y}-${position.x}`].push(key)
+      : (antinodeMap2[`${position.y}-${position.x}`] = [key])
+  );
+}
+
+const result2 = Object.keys(antinodeMap2).length;
+console.log(result2);
