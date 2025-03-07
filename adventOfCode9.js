@@ -28,18 +28,18 @@ console.log(litteralRep);
 
 let result = 0;
 
-let rightPointer = litteralRep.length - 1;
-while (!litteralRep[rightPointer]) right--;
+let right = litteralRep.length - 1;
+while (!litteralRep[right]) right--;
 
-for (let left = 0; left <= rightPointer; left++) {
+for (let left = 0; left <= right; left++) {
   if (litteralRep[left] !== null) {
     result += litteralRep[left] * left;
     continue;
   }
-  result += litteralRep[rightPointer] * left;
+  result += litteralRep[right] * left;
   do {
-    rightPointer--;
-  } while (litteralRep[rightPointer] === null);
+    right--;
+  } while (litteralRep[right] === null);
 }
 
 console.log(result);
