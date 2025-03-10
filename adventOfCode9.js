@@ -18,14 +18,6 @@ for (let i = 0; i < rawInput.length; i++) {
     litteralRep.push(Math.floor(i / 2));
 }
 
-/* TESTING
-const litteralRep = "00...111...2...333.44.5555.6666.777.888899"
-  .split("")
-  .map((num) => (num === "." ? null : parseInt(num)));
-
-console.log(litteralRep);
-*/
-
 let result = 0;
 
 let right = litteralRep.length - 1;
@@ -46,46 +38,76 @@ console.log(result);
 
 // PART 2
 
-const testArr = "00...111...2...333.44.5555.6666.777.888899";
+/* TESTING 
+const litteralRep = "00...111...2...333.44.5555.6666.777.888899"
+  .split("")
+  .map((num) => (num === "." ? null : parseInt(num)));
 
-console.log(testArr);
+console.log(litteralRep);
+*/
 
-let result2 = 0;
-
-right = testArr.length - 1;
-
-//get First Box
-while (!testArr[right]) right--;
-rightLeft = right;
-while (testArr[rightLeft - 1] === testArr[right]) rightLeft--;
-let currBox = [rightLeft, right + 1];
-console.log(testArr.slice(currBox[0], currBox[1]));
-
-right = rightLeft;
-right--;
-while (!testArr[right]) right--;
-rightLeft = right;
-while (testArr[rightLeft - 1] === testArr[right]) rightLeft--;
-let currBox2 = [rightLeft, right + 1];
-console.log(testArr.slice(currBox2[0], currBox2[1]));
-
-// add an array that only contains the max possible space in case this function returns false
-const findFittingSpace = (length, str) => {
-  for (let i = 0; i < str.length; i++) {
-    if (str[i] === ".") {
-      let index = i;
-      while (str[index] === ".") index++;
-      const spaceLength = index - i;
+const findFittingSpace = (limit, length, arr) => {
+  for (let i = 0; i < limit; i++) {
+    if (arr[i] === null) {
+      let spaceEnd = i;
+      while (arr[spaceEnd] === null) spaceEnd++;
+      const spaceLength = spaceEnd - i;
       if (length <= spaceLength) {
-        return [i, index];
+        return [i, spaceEnd];
       }
     }
   }
   return false;
 };
 
-console.log(findFittingSpace(2, testArr));
+const fillSpace = (spaceBounds, arr, length, num) => {
+  for (let i = spaceBounds[0]; i < spaceBounds[0] + length; i++) {
+    arr[i] = num;
+  }
+  return arr;
+};
 
-console.log(findFittingSpace(3, testArr));
+const eraseSlice = (arr, left, right) => {
+  for (let i = left; i <= right; i++) {
+    arr[i] = null;
+  }
+  return arr;
+};
 
-console.log(findFittingSpace(4, testArr));
+right = litteralRep.length - 1;
+
+//get First Box
+while (litteralRep[right] === null) right--;
+rightLeft = right;
+while (litteralRep[rightLeft - 1] === litteralRep[right]) rightLeft--;
+let currBox = [rightLeft, right + 1];
+
+while (right >= 0) {
+  const spaceBounds = findFittingSpace(
+    currBox[0],
+    currBox[1] - currBox[0],
+    litteralRep
+  );
+  if (spaceBounds) {
+    fillSpace(
+      spaceBounds,
+      litteralRep,
+      currBox[1] - currBox[0],
+      litteralRep[currBox[0]]
+    );
+    eraseSlice(litteralRep, rightLeft, right);
+  }
+  rightLeft--;
+  right = rightLeft;
+  while (litteralRep[rightLeft - 1] === litteralRep[right] && rightLeft >= 0)
+    rightLeft--;
+  currBox = [rightLeft, right + 1];
+}
+
+let result2 = 0;
+
+for (let i = 0; i <= litteralRep.length; i++) {
+  if (litteralRep[i]) result2 += litteralRep[i] * i;
+}
+
+console.log(result2);
