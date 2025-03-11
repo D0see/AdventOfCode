@@ -3,95 +3,87 @@ const fs = require("fs");
 // INTUT GATHERING & CLEANING
 
 const rawInput = fs.readFileSync("./adventOfCode11Input.txt", {
-    encoding: "utf-8",
+  encoding: "utf-8",
 });
 
 const stones = rawInput.split(" ");
 
 // PART 1
 
-/* TEST
-const stones = "0 1 10 99 999".split(" ").map((num) => parseInt(num));
-const stones = ["0"];
-*/
-
 const updateStones = (stones) => {
-    for (let i = 0; i < stones.length; i++) {
-        if (stones[i] === "0") {
-            stones[i] = "1";
-        } else if (stones[i].length % 2 === 0) {
-            const left = stones[i].slice(0, `${stones[i]}`.length / 2);
-            const right = `${parseInt(stones[i].slice(`${stones[i]}`.length / 2))}`;
-            stones.splice(i, 1, left, right);
-            i++;
-        } else {
-            stones[i] = `${parseInt(stones[i]) * 2024}`;
-        }
+  for (let i = 0; i < stones.length; i++) {
+    if (stones[i] === "0") {
+      stones[i] = "1";
+    } else if (stones[i].length % 2 === 0) {
+      const left = stones[i].slice(0, `${stones[i]}`.length / 2);
+      const right = `${parseInt(stones[i].slice(`${stones[i]}`.length / 2))}`;
+      stones.splice(i, 1, left, right);
+      i++;
+    } else {
+      stones[i] = `${parseInt(stones[i]) * 2024}`;
     }
-    return stones;
+  }
+  return stones;
 };
 
 const blink = (stones, num) => {
-    for (let i = 0; i < num; i++) {
-        updateStones(stones);
-    }
-    return stones;
+  for (let i = 0; i < num; i++) {
+    updateStones(stones);
+  }
+  return stones;
 };
 
-blink(stones, 25);
-console.log("endOfPart1");
+const stonesAfter25blinks = blink(stones, 25);
+console.log(stonesAfter25blinks.length);
 
 // PART 2
 
-const stats = {};
+const numOfStonesWithVal = {};
 for (let i = 0; i < stones.length; i++) {
-    stats[stones[i]] ? stats[stones[i]]++ : (stats[stones[i]] = 1);
+  numOfStonesWithVal[stones[i]]
+    ? numOfStonesWithVal[stones[i]]++
+    : (numOfStonesWithVal[stones[i]] = 1);
 }
 
-console.log(stats);
+console.log(numOfStonesWithVal);
 
 //HERE WE SAVE THE STONE DISPOSITION AFTER 25 MORE BLINKS FOR EVERY STONE NUMBER
-//{"1" = [...stones after 25 blinks as string]}
-
-/*
 const preCompStonesFromStone = {};
-for (const key of Object.keys(stats)) {
-    console.count("preComp");
-    preCompStonesFromStone[key] = blink([key], 25);
+for (const key of Object.keys(numOfStonesWithVal)) {
+  preCompStonesFromStone[key] = blink([key], 25);
 }
-fs.writeFileSync("./adventOfCode11_25BlinksStones.json", JSON.stringify(preCompStonesFromStone));
-*/
 
-const preComputedStones = JSON.parse(fs.readFileSync("./adventOfCode11_25BlinksStones.json"));
-
+//HERE WE SAVE THE NUMBER OF STONES CREATED AFTER 25 BLINKS FOR EVERY DIFFERENT STONES-KEY IN preCompStonesFromStone
 const numOfStonesCreatedAfter25Blinks = {};
-for (const key of Object.keys(preComputedStones)) {
-    numOfStonesCreatedAfter25Blinks[key] = preComputedStones[key].length;
-}
-console.log("1");
-for (const stones of Object.values(preComputedStones)) {
-    for (const stone of stones) {
-        if (!numOfStonesCreatedAfter25Blinks[stone]) {
-            console.count("preComp");
-            preComputedStones[stone] = blink([stone], 25);
-            numOfStonesCreatedAfter25Blinks[stone] = preComputedStones[stone].length;
-        }
-    }
-}
-console.log("2");
-for (const key of Object.keys(preComputedStones)) {
-    preComputedStones[key] = preComputedStones[key].reduce(
-        (acc, stone) => acc + numOfStonesCreatedAfter25Blinks[stone],
-        0
-    );
+for (const key of Object.keys(preCompStonesFromStone)) {
+  numOfStonesCreatedAfter25Blinks[key] = preCompStonesFromStone[key].length;
 }
 
-console.log("starting to add");
+//HERE WE DO THE SAME FOR THE STONES-VALUES IN preCompStonesFromStone, SKIPPING THE ONE WE ALREADY COMPUTED
+for (const stones of Object.values(preCompStonesFromStone)) {
+  for (const stone of stones) {
+    if (!numOfStonesCreatedAfter25Blinks[stone]) {
+      preCompStonesFromStone[stone] = blink([stone], 25);
+      numOfStonesCreatedAfter25Blinks[stone] =
+        preCompStonesFromStone[stone].length;
+    }
+  }
+}
+
+//HERE WE JUST ADD THE STONES-VALUES IN preCompStonesFromStone (USING THEM AS KEYS FOR numOfStonesCreatedAfter25Blinks) SO IT ADDS UP TO 75 BLINKS
+for (const key of Object.keys(preCompStonesFromStone)) {
+  preCompStonesFromStone[key] = preCompStonesFromStone[key].reduce(
+    (acc, stone) => acc + numOfStonesCreatedAfter25Blinks[stone],
+    0
+  );
+}
 
 let result = 0;
 
 for (const stone of stones) {
-    result += preComputedStones[stone];
+  result += preCompStonesFromStone[stone];
 }
 
 console.log(result);
+
+//THIS IS BY FAR MY WORST SOLUTION IM SORRY IF YOU TRIED TO UNDERSTAND THIS :(
