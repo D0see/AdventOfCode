@@ -18,8 +18,8 @@ const floodFill = (y, x, map, vege = map[y][x], plotStats = {area : 0, perimeter
     plotStats.area++;
     [[y, x + 1, "RIGHT"], 
     [y, x - 1, "LEFT"], 
-    [y + 1, x, "UP"], 
-    [y - 1, x, "DOWN"]].forEach(([movY, movX, direction]) => {
+    [y + 1, x, "DOWN"], 
+    [y - 1, x, "UP"]].forEach(([movY, movX, direction]) => {
         //IF DESTINATION IS NOT ALREADY VISITED AND HAS THE CORRECT VEGGIE
         if (map[movY]?.[movX] === vege) {
             floodFill(movY, movX, map, vege, plotStats, fencedSpots);
