@@ -16,38 +16,17 @@ const floodFill = (y, x, map, vege = map[y][x], plotStats = {area : 0, perimeter
     //ADDS IT THE FENCED STOP MAP
     fencedSpots[`${y}-${x}`] = true;
     plotStats.area++;
-    //IF ITS NOT ALREADY VISITED AND HAS THE CORRECT VEGGIE
-    if (map[y]?.[x + 1] === vege) {
-        floodFill(y, x + 1, map, vege, plotStats, fencedSpots);
-    //IF IT NOT ALREADY VISITED
-    } else if (!fencedSpots[`${y}-${x + 1}`]) {
-        plotStats.perimeter++;
-    }
-    if (map[y]?.[x - 1] === vege) {
-        floodFill(y, x - 1, map, vege, plotStats, fencedSpots);
-    } else if (!fencedSpots[`${y}-${x - 1}`]) {
-        plotStats.perimeter++;
-    }
-    if (map[y + 1]?.[x] === vege) {
-        floodFill(y + 1, x, map, vege, plotStats, fencedSpots);
-    } else if (!fencedSpots[`${y + 1}-${x}`]) {
-        plotStats.perimeter++;
-    }
-    if (map[y - 1]?.[x] === vege) {
-        floodFill(y - 1, x, map, vege, plotStats, fencedSpots);
-    } else if (!fencedSpots[`${y - 1}-${x}`]) {
-        plotStats.perimeter++;
-    }
+    [[y, x + 1], [y, x - 1], [y + 1, x], [y - 1, x]].forEach(([movY, movX]) => {
+        //IF ITS NOT ALREADY VISITED AND HAS THE CORRECT VEGGIE
+        if (map[movY]?.[movX] === vege) {
+            floodFill(movY, movX, map, vege, plotStats, fencedSpots);
+        //IF ITS NOT PART OF THIS SPOT
+        } else if (!fencedSpots[`${movY}-${movX}`]) {
+            plotStats.perimeter++;
+        }
+    })
     return plotStats;
 }
-
-/* TESTING 
-
-const plotStats = floodFill(0, 2, map);
-console.log(plotStats);
-console.log(map[0]);
-
-*/
 
 let result = 0;
 
