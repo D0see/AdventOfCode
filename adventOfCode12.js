@@ -16,7 +16,10 @@ const floodFill = (y, x, map, vege = map[y][x], plotStats = {area : 0, perimeter
     //ADDS IT THE FENCED-SPOTS MAP
     fencedSpots[`${y}-${x}`] = true;
     plotStats.area++;
-    [[y, x + 1], [y, x - 1], [y + 1, x], [y - 1, x]].forEach(([movY, movX]) => {
+    [[y, x + 1, "RIGHT"], 
+    [y, x - 1, "LEFT"], 
+    [y + 1, x, "UP"], 
+    [y - 1, x, "DOWN"]].forEach(([movY, movX, direction]) => {
         //IF DESTINATION IS NOT ALREADY VISITED AND HAS THE CORRECT VEGGIE
         if (map[movY]?.[movX] === vege) {
             floodFill(movY, movX, map, vege, plotStats, fencedSpots);
@@ -24,15 +27,9 @@ const floodFill = (y, x, map, vege = map[y][x], plotStats = {area : 0, perimeter
         } else if (!fencedSpots[`${movY}-${movX}`]) {
             plotStats.perimeter++;
             //SAVE FENCES AT CURRENT POS FOR PART 2
-            let fenceOrientation;
-            if (movY !== y) {
-                fenceOrientation = movY === y - 1 ? "UP" : "DOWN";
-            } else {
-                fenceOrientation = movX === x - 1 ? "LEFT" : "RIGHT";
-            }
             plotStats.fencePositions[`${y}-${x}`] ? 
-            plotStats.fencePositions[`${y}-${x}`][fenceOrientation] = true : 
-            plotStats.fencePositions[`${y}-${x}`] = {[fenceOrientation] : true};
+            plotStats.fencePositions[`${y}-${x}`][direction] = true : 
+            plotStats.fencePositions[`${y}-${x}`] = {[direction] : true};
         }
     })
     return plotStats;
