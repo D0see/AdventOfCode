@@ -35,6 +35,11 @@ const floodFill = (y, x, map, vege = map[y][x], plotStats = {area : 0, perimeter
     return plotStats;
 }
 
+//COUNTSIDES USING FENCESPOSITIONS -> ORIENTATIONS MAP FOR PART 2
+const countSides = (fencePositions) => {
+
+}
+
 let result = 0;
 
 for (let y = 0; y < map.length; y++) {
@@ -43,7 +48,7 @@ for (let y = 0; y < map.length; y++) {
             // plotStats = {area : int, perimeter : int}
             const plotStats = floodFill(y, x, map);
             result += plotStats.area * plotStats.perimeter;
-            console.log(plotStats.fencePositions);
+            countSides(plotStats.fencePositions);
         } 
     }
 }
@@ -52,4 +57,4 @@ console.log(result);
 
 // PART 2
 
-// for part 2 i added a new property to plotStats which keeps track of the fences at Y-X positions (ex : y-x = {"L" = true, "R"= true}) 
+// for part 2 i added a new property to plotStats which keeps track of the fences at Y-X positions (ex : y-x = {"Left" = true, "Right"= true}) 
