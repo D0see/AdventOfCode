@@ -26,22 +26,17 @@ for (const infos of splittedByLines) {
 
 
 //PART 1
-// 101 tiles wide 103 tiles tall
 const tilesWide = 101;
 const tilesTall = 103;
 
 const robotsPositionsAfter100s = [];
 
-console.log(robots[0]);
-
 for (const robot of robots) {
     robotsPositionsAfter100s.push({
-        'x' : (((robot.position.x + (robot.velocity.x /* *100 */)) % tilesWide) + tilesWide) % tilesWide,
-        'y' : (((robot.position.y + (robot.velocity.y /* *100 */)) % tilesWide) + tilesWide) % tilesWide
+        'x' : (((robot.position.x + (robot.velocity.x *100 )) % tilesWide) + tilesWide) % tilesWide,
+        'y' : (((robot.position.y + (robot.velocity.y *100 )) % tilesTall) + tilesTall) % tilesTall
     })
 }
-
-console.log(robotsPositionsAfter100s[0])
 
 let quadrants = [0,0,0,0]
 
@@ -64,7 +59,7 @@ for (const robot of robotsPositionsAfter100s) {
         }
     }
 }
-console.log(quadrants)
+
 console.log(quadrants.reduce((acc, val) => {
     acc *= val;
     return acc;
