@@ -53,7 +53,10 @@ for (const robot of robotsPositionsAfter100s) {
 }
 console.log(quadrants.reduce((acc, val) => acc *= val, 1));
 
-//PART 2 ATTEMPT AT VISUALIZATION (nope)
+
+//PART 2 ATTEMPT AT FINDING THE TREE ! NEXT : try floodfill for around 15 robots next to eachother
+
+
 const matrix = [];
 for (let y = 0; y < tilesTall; y++) {
     const currRow = [];
@@ -63,31 +66,59 @@ for (let y = 0; y < tilesTall; y++) {
     matrix.push(currRow);
 }
 
-
-
 //initializes matrix
 for (const robot of robots) {
     matrix[robot.position.y][robot.position.x] += 1;
 }
 
-//animationLoop
-const hasTrunk = (matrix) => {
-    for (let i = 0; i < 25; i++) {
-        if (matrix[102 - i][50]) continue;
-        return false;
+
+
+const tree ="oooxooo.ooxxxoo.oxxxxxo.xxxxxxx".split(".").map(row => row.split('').map(cell => cell === 'x' ? true : false));
+const checkForTree = (matrix, currY, currX, tree) => {
+    for (let y = 0; y < tree.length; y++) {
+        for (let x = 0; x < tree[0].length; x++) {
+            if (tree[y][x] && !matrix[currY + y][currX + x]) {return false;}
+        }
     }
     return true;
 }
 
+const hasTree = (matrix, tree) => {
+    for (let y = 0; y < matrix.length - (tree.length - 1); y++) {
+        for (let x = 0; x < matrix[0].length - (tree[0].length - 1); x++) {
+            if(checkForTree(matrix, y, x, tree)) return true;
+        }
+    }
+    return false;
+}
+
+/* test
+const matrix = [
+    [0,0,0,0,1,0,0,0,0],
+    [0,0,0,1,1,1,0,0,0],
+    [0,0,1,1,1,1,1,0,0],
+    [0,1,1,1,1,1,1,1,0],
+]
+
+
+if (hasTree(matrix, tree)) {
+    console.log("tree alert");
+}
+
+*/
+
+
 while(true) {
+    console.count("iteCount")
     for (const robot of robots) {
         matrix[robot.position.y][robot.position.x] -= 1;
         matrix
         [(((robot.position.y + (robot.velocity.y *100 )) % tilesTall) + tilesTall) % tilesTall]
         [(((robot.position.x + (robot.velocity.x)) % tilesWide) + tilesWide) % tilesWide] += 1;
     }
-    if (hasTrunk(matrix)) {
-        console.log("trunk alert");
+    if (hasTree(matrix, tree)) {
+        console.log("tree alert");
         break;
     }
 }
+    
