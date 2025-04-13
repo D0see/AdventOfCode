@@ -45,8 +45,6 @@ for (let i = 0; i < stones.length; i++) {
     : (numOfStonesWithVal[stones[i]] = 1);
 }
 
-console.log(numOfStonesWithVal);
-
 //HERE WE SAVE THE STONE DISPOSITION AFTER 25 MORE BLINKS FOR EVERY STONE NUMBER
 const preCompStonesFromStone = {};
 for (const key of Object.keys(numOfStonesWithVal)) {
