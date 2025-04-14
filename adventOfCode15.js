@@ -139,9 +139,9 @@ normalBoard.forEach(row =>{
 
 const startingPosition = {};
 
-yLoop: for (let y = 0; y < board.length; y++) {
-  for (let x = 0; x < board[0].length; x++) {
-    if (board[y][x] === "@") {
+yLoop: for (let y = 0; y < doubledBoard.length; y++) {
+  for (let x = 0; x < doubledBoard[0].length; x++) {
+    if (doubledBoard[y][x] === "@") {
       (startingPosition.posX = x), (startingPosition.posY = y);
       break yLoop;
     }
@@ -154,7 +154,7 @@ const moveHorizontally = (board, previousPos, nextPos, moveMap, move) => {
     const currLookUp = board[nextPos.posY][nextPos.posX + offsetX];
     if (currLookUp === ".") {
       board[nextPos.posY][nextPos.posX + offsetX] = move === ">" ? "]" : "[";
-      let leftBracket = board[nextPos.posY][nextPos.posX + offsetX] = "[";
+      let leftBracket = board[nextPos.posY][nextPos.posX + offsetX] === "[";
       while (offsetX) {
         Math.sign(offsetX) === 1 ? offsetX-- : offsetX++; 
         board[nextPos.posY][nextPos.posX + offsetX] = leftBracket ? ']' : '[';
@@ -241,29 +241,73 @@ for (const move of moves) {
   goToNextStep(doubledBoard, startingPosition, moveMap, move);
 }
 
-// RESULT
+//RESULT
+console.log(getGPSScore(doubledBoard, '['));
 
-
-
-// const testRow = [["#","#",".",".",".",".","[","]","[","]","@",".","#","#"]];
-// const testMoves = ['<','<','<','<','<','<'];
-
-// const testInitialPos = {posX: 10,posY: 0,}
-// for (const move of testMoves) {
-//   goToNextStep(testRow, testInitialPos, moveMap, move)
-//   console.log(testRow)
+// const stringified = doubledBoard.map(row => row.join("")).join("\r\n");
+// for (const row of doubledBoard) {
+//   fs.writeFileSync("./test.txt", stringified, {
+//     encoding: "utf-8",
+//   });
 // }
 
-// const testBoard2 = [["#","#","#","#","#","#"],
-//                     [".",".","@",".",".","."],
-//                     [".","[","]","[","]","."],
-//                     ["[","]","[","]",".","."],
-//                     [".",".",".",".",".","."]];
 
-// const testMoves2 = ['v','^','^','^','^','^'];
+// const testRow = [["#","#","#","#","#","#","#","#","#","#","#","#","#","#",],
+//                 ["#","#",".",".",".",".",".",".",".",".",".",".","#","#"],
+//                 ["#","#",".",".",".",".","[","]",".",".",".",".","#","#",],
+//                 ["#","#",".",".",".","[","]","[","]","#",".",".","#","#",],
+//                 ["#","#",".",".","[","]","[","]","[","]",".",".","#","#",],
+//                 ["#","#",".",".",".",".",".","@",".",".",".",".","#","#",],
+//                 ["#","#","#","#","#","#","#","#","#","#","#","#","#","#",]];
+// const testMoves = ['^'];
 
-// const testInitialPos = {posX: 2,posY: 1,}
+// const testInitialPos = {posX: 7,posY: 5,}
+// for (const move of testMoves) {
+//   goToNextStep(testRow, testInitialPos, moveMap, move)
+// }
+
+// const stringified = testRow.map(row => row.join("")).join("\r\n");
+// for (const row of testRow) {
+//   fs.writeFileSync("./test.txt", stringified, {
+//     encoding: "utf-8",
+//   });
+// }
+
+
+// console.log(testRow)
+//----------------------------------------------------
+
+// const testBoard2 = [["@","[","]","[","]",".",".","#"]]
+
+// const testMoves2 = ['>','>','>'];
+
+// const testInitialPos = {posX: 0,posY: 0,}
 // for (const move of testMoves2) {
 //   goToNextStep(testBoard2, testInitialPos, moveMap, move);
 //   console.log(testBoard2)
 // }
+
+//----------------------------------------------------
+
+// const testBoard2 = [["#",".","[","]",".","[","]",".","@"]]
+
+// const testMoves2 = ['<','<','<'];
+
+// const testInitialPos = {posX: 8,posY: 0,}
+// for (const move of testMoves2) {
+//   goToNextStep(testBoard2, testInitialPos, moveMap, move);
+//   console.log(testBoard2)
+// }
+
+//----------------------------------------------------
+
+
+// const testMoves3 = ["<","v","v","<","<","^","^","<","<","^","^"];
+// let testBoard3 = "##############/##......##..##/##..........##/##....[][]@.##/##....[]....##/##..........##/##############";
+// testBoard3 = testBoard3.split("/").map(row => row.split(""));
+
+// const testInitialPos = {posX: 10,posY: 3,}
+// for (const move of testMoves3) {
+//   goToNextStep(testBoard3, testInitialPos, moveMap, move);
+// }
+// console.log(testBoard3)
