@@ -104,11 +104,6 @@ console.log(getGPSScore(board, 'O'));
 
 // PART 2
 
-// If the tile is #, the new map contains ## instead.
-// If the tile is O, the new map contains [] instead.
-// If the tile is ., the new map contains .. instead.
-// If the tile is @, the new map contains @. instead.
-
 const normalBoard = splittedByLines
   .slice(0, separation)
   .map((line) => line.split(""));
@@ -243,71 +238,3 @@ for (const move of moves) {
 
 //RESULT
 console.log(getGPSScore(doubledBoard, '['));
-
-// const stringified = doubledBoard.map(row => row.join("")).join("\r\n");
-// for (const row of doubledBoard) {
-//   fs.writeFileSync("./test.txt", stringified, {
-//     encoding: "utf-8",
-//   });
-// }
-
-
-// const testRow = [["#","#","#","#","#","#","#","#","#","#","#","#","#","#",],
-//                 ["#","#",".",".",".",".",".",".",".",".",".",".","#","#"],
-//                 ["#","#",".",".",".",".","[","]",".",".",".",".","#","#",],
-//                 ["#","#",".",".",".","[","]","[","]","#",".",".","#","#",],
-//                 ["#","#",".",".","[","]","[","]","[","]",".",".","#","#",],
-//                 ["#","#",".",".",".",".",".","@",".",".",".",".","#","#",],
-//                 ["#","#","#","#","#","#","#","#","#","#","#","#","#","#",]];
-// const testMoves = ['^'];
-
-// const testInitialPos = {posX: 7,posY: 5,}
-// for (const move of testMoves) {
-//   goToNextStep(testRow, testInitialPos, moveMap, move)
-// }
-
-// const stringified = testRow.map(row => row.join("")).join("\r\n");
-// for (const row of testRow) {
-//   fs.writeFileSync("./test.txt", stringified, {
-//     encoding: "utf-8",
-//   });
-// }
-
-
-// console.log(testRow)
-//----------------------------------------------------
-
-// const testBoard2 = [["@","[","]","[","]",".",".","#"]]
-
-// const testMoves2 = ['>','>','>'];
-
-// const testInitialPos = {posX: 0,posY: 0,}
-// for (const move of testMoves2) {
-//   goToNextStep(testBoard2, testInitialPos, moveMap, move);
-//   console.log(testBoard2)
-// }
-
-//----------------------------------------------------
-
-// const testBoard2 = [["#",".","[","]",".","[","]",".","@"]]
-
-// const testMoves2 = ['<','<','<'];
-
-// const testInitialPos = {posX: 8,posY: 0,}
-// for (const move of testMoves2) {
-//   goToNextStep(testBoard2, testInitialPos, moveMap, move);
-//   console.log(testBoard2)
-// }
-
-//----------------------------------------------------
-
-
-// const testMoves3 = ["<","v","v","<","<","^","^","<","<","^","^"];
-// let testBoard3 = "##############/##......##..##/##..........##/##....[][]@.##/##....[]....##/##..........##/##############";
-// testBoard3 = testBoard3.split("/").map(row => row.split(""));
-
-// const testInitialPos = {posX: 10,posY: 3,}
-// for (const move of testMoves3) {
-//   goToNextStep(testBoard3, testInitialPos, moveMap, move);
-// }
-// console.log(testBoard3)
