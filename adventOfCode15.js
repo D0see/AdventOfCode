@@ -34,11 +34,11 @@ const updatePosition = (previousPos, nextPos) => {
   previousPos.posY = nextPos.posY;
 };
 
-const getGPSScore = (board) => {
+const getGPSScore = (board, char, xOffset = 0) => {
   let result = 0;
   for (let y = 0; y < board.length; y++) {
     for (let x = 0; x < board[0].length; x++) {
-      if (board[y][x] === "O") result += 100 * y + x;
+      if (board[y][x] === char) result += 100 * y + (x - xOffset);
     }
   }
   return result;
@@ -100,7 +100,7 @@ const UpdateBoard = (board, previousPos, moveMap, move) => {
 for (const move of moves) UpdateBoard(board, initialPosition, moveMap, move);
 
 // RESULT
-console.log(getGPSScore(board));
+console.log(getGPSScore(board, 'O'));
 
 // PART 2
 
@@ -169,9 +169,40 @@ const moveHorizontally = (board, previousPos, nextPos, moveMap, move) => {
   }
 }
 
-const moveVertically = (board, previousPos, nextPos, moveMap, move) => {
-  let offsetY = 0;
-  //TODO floodfill with upwards disc
+//recursive function to find all linked boxes in {[x-y] = true,...}, has "blocked" -> true if they cant be moved
+const getLinkedBoxesPos = (boxesPushed, board, direction, y, x) => {
+  if (boxesPushed["blocked"]) return;
+  boxesPushed[`${y}-${x}`] = true;
+  if (['[',']'].includes(board[y][x])) {
+    if (!boxesPushed[`${y}-${x - 1}`] && board[y][x] === ']') getLinkedBoxesPos(boxesPushed, board, direction, y, x - 1);
+    else if (!boxesPushed[`${y}-${x + 1}`] && board[y][x] === '[') getLinkedBoxesPos(boxesPushed, board, direction, y, x + 1);
+  }
+  if (['[',']'].includes(board[y + direction][x])) getLinkedBoxesPos(boxesPushed, board, direction, y + direction, x);
+  else if (board[y + direction][x] === "#") boxesPushed["blocked"] = true;
+}
+
+const moveVertically = (board, previousPos, nextPos, move) => {
+  const boxesPushed = {};
+  const direction = (move === '^' ? -1 : 1)
+  getLinkedBoxesPos(boxesPushed, board, direction, nextPos.posY, nextPos.posX);
+  if (boxesPushed["blocked"]) return;
+  let boxesPushedKeys = Object.keys(boxesPushed).map(coord => coord.split("-").map(num => parseInt(num)));
+  if (move === '^') {
+    boxesPushedKeys = boxesPushedKeys.sort((a, b) => a[0] - b[0])
+  } else {
+    boxesPushedKeys = boxesPushedKeys.sort((a, b) => b[0] - a[0])
+  }
+
+  for (const coord of boxesPushedKeys) {
+    const [y, x] = coord;
+    board[y + direction][x] = board[y][x];
+    board[y][x] = '.'
+  }
+
+  board[nextPos.posY][nextPos.posX] = "@";
+  board[previousPos.posY][previousPos.posX] = ".";
+  updatePosition(previousPos, nextPos);
+
 }
 
 const goToNextStep = (board, previousPos, moveMap, move) => {
@@ -191,13 +222,13 @@ const goToNextStep = (board, previousPos, moveMap, move) => {
   if (['[',']'].includes(board[nextPos.posY][nextPos.posX])) {
     switch (move) {
         case "^": 
-          moveVertically(board, previousPos, nextPos, moveMap, move);
+          moveVertically(board, previousPos, nextPos, move);
           break;
         case ">":
           moveHorizontally(board, previousPos, nextPos, moveMap, move);
           break;
         case "v": 
-          moveVertically(board, previousPos, nextPos, moveMap, move);
+          moveVertically(board, previousPos, nextPos, move);
           break;
         case "<":
           moveHorizontally(board, previousPos, nextPos, moveMap, move);
@@ -206,19 +237,33 @@ const goToNextStep = (board, previousPos, moveMap, move) => {
   }
 }
 
-const testRow = [["#","#",".",".",".",".","[","]","[","]","@",".","#","#"]];
-const testMoves = ['<','<','<','<','<','<'];
-
-const testInitialPos = {posX: 10,posY: 0,}
-for (const move of testMoves) {
-  goToNextStep(testRow, testInitialPos, moveMap, move)
-  console.log(testRow)
+for (const move of moves) {
+  goToNextStep(doubledBoard, startingPosition, moveMap, move);
 }
 
-const testBoard2 = [["#","#","#","#","#","#"],
-                    [".",".",".",".",".","."],
-                    [".","[","]","[","]","."],
-                    [".",".","[","]",".",".",]
-                    [".",".","@",".",".","."]];
+// RESULT
+console.log(getGPSScore(doubledBoard, '[', 1));
 
-const testMoves2 = ['^','^','^','^','^','^'];
+
+// const testRow = [["#","#",".",".",".",".","[","]","[","]","@",".","#","#"]];
+// const testMoves = ['<','<','<','<','<','<'];
+
+// const testInitialPos = {posX: 10,posY: 0,}
+// for (const move of testMoves) {
+//   goToNextStep(testRow, testInitialPos, moveMap, move)
+//   console.log(testRow)
+// }
+
+// const testBoard2 = [["#","#","#","#","#","#"],
+//                     [".",".","@",".",".","."],
+//                     [".","[","]","[","]","."],
+//                     ["[","]","[","]",".","."],
+//                     [".",".",".",".",".","."]];
+
+// const testMoves2 = ['v','^','^','^','^','^'];
+
+// const testInitialPos = {posX: 2,posY: 1,}
+// for (const move of testMoves2) {
+//   goToNextStep(testBoard2, testInitialPos, moveMap, move);
+//   console.log(testBoard2)
+// }
