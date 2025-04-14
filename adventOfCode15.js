@@ -34,11 +34,11 @@ const updatePosition = (previousPos, nextPos) => {
   previousPos.posY = nextPos.posY;
 };
 
-const getGPSScore = (board, char, xOffset = 0) => {
+const getGPSScore = (board, char) => {
   let result = 0;
   for (let y = 0; y < board.length; y++) {
     for (let x = 0; x < board[0].length; x++) {
-      if (board[y][x] === char) result += 100 * y + (x - xOffset);
+      if (board[y][x] === char) result += 100 * y + x;
     }
   }
   return result;
@@ -242,7 +242,7 @@ for (const move of moves) {
 }
 
 // RESULT
-console.log(getGPSScore(doubledBoard, '[', 1));
+
 
 
 // const testRow = [["#","#",".",".",".",".","[","]","[","]","@",".","#","#"]];
