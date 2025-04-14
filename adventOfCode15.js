@@ -169,12 +169,16 @@ const moveHorizontally = (board, previousPos, nextPos, moveMap, move) => {
   }
 }
 
+const moveVertically = (board, previousPos, nextPos, moveMap, move) => {
+  let offsetY = 0;
+  //TODO floodfill with upwards disc
+}
+
 const goToNextStep = (board, previousPos, moveMap, move) => {
   const nextPos = {
     posY: previousPos.posY + moveMap[move].y,
     posX: previousPos.posX + moveMap[move].x,
   };
-  console.log(nextPos)
   // if next move leads to a wall
   if (board[nextPos.posY][nextPos.posX] === "#") return;
   // if next move leads to an empty space
@@ -184,19 +188,19 @@ const goToNextStep = (board, previousPos, moveMap, move) => {
     updatePosition(previousPos, nextPos);
   }
   // if next move leads to a box
-  console.log(move, "move")
-  console.log("next Symbol", board[nextPos.posY][nextPos.posX])
   if (['[',']'].includes(board[nextPos.posY][nextPos.posX])) {
-    console.log("passes1")
     switch (move) {
         case "^": 
+          moveVertically(board, previousPos, nextPos, moveMap, move);
+          break;
         case ">":
           moveHorizontally(board, previousPos, nextPos, moveMap, move);
           break;
         case "v": 
+          moveVertically(board, previousPos, nextPos, moveMap, move);
+          break;
         case "<":
           moveHorizontally(board, previousPos, nextPos, moveMap, move);
-          console.log("passes2")
           break;
     }
   }
@@ -206,7 +210,15 @@ const testRow = [["#","#",".",".",".",".","[","]","[","]","@",".","#","#"]];
 const testMoves = ['<','<','<','<','<','<'];
 
 const testInitialPos = {posX: 10,posY: 0,}
-for (const move of testMoves) {goToNextStep(testRow, testInitialPos, moveMap, move)
+for (const move of testMoves) {
+  goToNextStep(testRow, testInitialPos, moveMap, move)
   console.log(testRow)
 }
 
+const testBoard2 = [["#","#","#","#","#","#"],
+                    [".",".",".",".",".","."],
+                    [".","[","]","[","]","."],
+                    [".",".","[","]",".",".",]
+                    [".",".","@",".",".","."]];
+
+const testMoves2 = ['^','^','^','^','^','^'];
