@@ -7,11 +7,9 @@ const rawInput = fs.readFileSync("./adventOfCode16Input.txt", {
 });
 
 const splittedByLines = rawInput.split("\r\n");
-
 const board = splittedByLines.map(row => row.split(""));
 
 //PART 1
-
 //recursive function to get to E
 const traverseBoard = (board, y, x, orientation, currResult, result, minScore = {}) => {
     if (result[0] && currResult > result[0]) return;
@@ -24,10 +22,9 @@ const traverseBoard = (board, y, x, orientation, currResult, result, minScore = 
     if (minScore[`${y}-${x}`] <= (currResult)) {return;}
     minScore[`${y}-${x}`] = currResult;
 
-    if (board[y - 1][x] !== '#') traverseBoard(board, y - 1, x, 'N', currResult + (orientation === 'N' ? 1 : 1001), result, minScore)
-    if (board[y][x + 1] !== '#') traverseBoard(board, y, x + 1, 'E', currResult + (orientation === 'E' ? 1 : 1001), result, minScore)
-    if (board[y + 1][x] !== '#') traverseBoard(board, y + 1, x, 'S', currResult + (orientation === 'S' ? 1 : 1001), result, minScore)
-    if (board[y][x - 1] !== '#') traverseBoard(board, y, x - 1, 'W', currResult + (orientation === 'W' ? 1 : 1001), result, minScore)
+    [[y - 1, x, 'N'],[y, x + 1, 'E'],[y + 1, x, 'S'],[y, x - 1, 'W']].forEach(([newY, newX, dir]) => {
+        if (board[newY][newX] !== '#') traverseBoard(board, newY, newX, dir, currResult + (orientation === dir ? 1 : 1001), result, bestSquares, minScore)
+    })
 }
 
 let result = [0];
@@ -61,24 +58,12 @@ const traverseBoardAndGetBestSquares = (board, y, x, orientation, currResult, re
     minScore[`${y}-${x}`] = currResult;
     squareVisited[`${y}-${x}`] = true;
 
-    if (board[y - 1][x] !== '#') traverseBoardAndGetBestSquares(board, y - 1, x, 'N', currResult + (orientation === 'N' ? 1 : 1001), result, bestSquares, minScore, JSON.parse(JSON.stringify(squareVisited)))
-    if (board[y][x + 1] !== '#') traverseBoardAndGetBestSquares(board, y, x + 1, 'E', currResult + (orientation === 'E' ? 1 : 1001), result, bestSquares, minScore, JSON.parse(JSON.stringify(squareVisited)))
-    if (board[y + 1][x] !== '#') traverseBoardAndGetBestSquares(board, y + 1, x, 'S', currResult + (orientation === 'S' ? 1 : 1001), result, bestSquares, minScore, JSON.parse(JSON.stringify(squareVisited)))
-    if (board[y][x - 1] !== '#') traverseBoardAndGetBestSquares(board, y, x - 1, 'W', currResult + (orientation === 'W' ? 1 : 1001), result, bestSquares, minScore, JSON.parse(JSON.stringify(squareVisited)))
+    [[y - 1, x, 'N'],[y, x + 1, 'E'],[y + 1, x, 'S'],[y, x - 1, 'W']].forEach(([newY, newX, dir]) => {
+        if (board[newY][newX] !== '#') traverseBoardAndGetBestSquares(board, newY, newX, dir, currResult + (orientation === dir ? 1 : 1001), result, bestSquares, minScore, JSON.parse(JSON.stringify(squareVisited)))
+    })
 }
 
-
-
-const testBoard = [
-    ['#','#','#','#','#','#','#','#','#'],
-    ['#','.','.','#','.','.','.','.','E'],
-    ['#','.','.','.','#','.','.','#','#'],
-    ['#','S','#','.','.','.','.','#','#'],
-    ['#','#','#','#','#','#','#','#','#']
-]
 const bestSquares = {};
 let result2 = [0];
 traverseBoardAndGetBestSquares(board, board.length - 2, 1, 'E', 0, result2, bestSquares);
-console.log(result2[0]);
-console.log(bestSquares[result2[0]])
 console.log(Object.keys(bestSquares[result2[0]]).length);
