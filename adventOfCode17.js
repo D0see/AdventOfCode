@@ -15,5 +15,6 @@ const registers = splittedByLines.slice(0, separation)
         return acc;
     }, {});
 
-console.log(registers)
+const program = splittedByLines[splittedByLines.length - 1].split(': ')[1].split(',');
+
 //PART 1
