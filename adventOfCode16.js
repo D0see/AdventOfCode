@@ -35,6 +35,7 @@ traverseBoard(board, board.length - 2, 1, 'E', 0, result);
 console.log(result[0]);
 
 //PART 2
+//recursive function to get to E
 const traverseBoardAndGetBestSquares = (board, y, x, orientation, currResult, result, bestSquares, minScore = {}, squareVisited = {}) => {
     if (result[0] && currResult > result[0]) return;
     if (board[y][x] === 'E') {
@@ -55,7 +56,7 @@ const traverseBoardAndGetBestSquares = (board, y, x, orientation, currResult, re
         }
     };
 
-    if (minScore[`${y}-${x}`] < (currResult)) {return;}
+    if (minScore[`${y}-${x}`] + 1000 < (currResult)) {return;}
 
     minScore[`${y}-${x}`] = currResult;
     squareVisited[`${y}-${x}`] = true;
@@ -65,7 +66,7 @@ const traverseBoardAndGetBestSquares = (board, y, x, orientation, currResult, re
     if (board[y + 1][x] !== '#') traverseBoardAndGetBestSquares(board, y + 1, x, 'S', currResult + (orientation === 'S' ? 1 : 1001), result, bestSquares, minScore, JSON.parse(JSON.stringify(squareVisited)))
     if (board[y][x - 1] !== '#') traverseBoardAndGetBestSquares(board, y, x - 1, 'W', currResult + (orientation === 'W' ? 1 : 1001), result, bestSquares, minScore, JSON.parse(JSON.stringify(squareVisited)))
 }
-//recursive function to get to E
+
 
 
 const testBoard = [
