@@ -10,7 +10,6 @@ const rawInput = fs.readFileSync("./adventOfCode18Input.txt", {
 const splittedByLines = rawInput.split("\r\n");
 const coordinatesArrays = splittedByLines.map(line => line.split(','));
 
-
 // PART 1
 
 // coordinate obj -> {...y: {...x}}
@@ -20,7 +19,7 @@ const coordinates = coordinatesArrays.slice(0, 1024).reduce((obj, coord) => {
     return obj;
 }, {})
 
-// recursive function to find the shortest path
+// recursive DFS function to find the shortest path
 const findShortestPath = (coordinates, y, x, currPathLength, destinationY, destinationX, shortestPath = [0]) => {
     coordinates[y] ? coordinates[y][x] = currPathLength : coordinates[y] = {[x] : currPathLength};
 
@@ -41,3 +40,20 @@ const findShortestPath = (coordinates, y, x, currPathLength, destinationY, desti
 }
 
 console.log(findShortestPath(coordinates, 0,0,0,70,70));
+
+// PART 2
+
+// coordinate obj -> {...y: {...x}}
+const allCorruptedCoordinates = coordinatesArrays.slice(1024);
+
+for (let i = 0; i < allCorruptedCoordinates.length; i++) {
+    const coordinates2 = coordinatesArrays.slice(0, 1025 + i).reduce((obj, coord) => {
+        // corrupted coordinates are initialized at -Infinity
+        obj[coord[1]] ? obj[coord[1]][coord[0]] = -Infinity : obj[coord[1]] = {[coord[0]] : -Infinity};
+        return obj;
+    }, {})
+    const shortestRoute = findShortestPath(coordinates2, 0,0,0,70,70);
+    if (shortestRoute) continue;
+    console.log(allCorruptedCoordinates[i])
+    break;
+}
