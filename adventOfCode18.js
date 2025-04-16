@@ -43,17 +43,17 @@ console.log(findShortestPath(coordinates, 0,0,0,70,70));
 
 // PART 2
 
-// coordinate obj -> {...y: {...x}}
+// corrupted coordinates after 1024th
 const allCorruptedCoordinates = coordinatesArrays.slice(1024);
 
 for (let i = 0; i < allCorruptedCoordinates.length; i++) {
+
+    // TO-FIX THIS IS HORRIBLE !!!
     const coordinates2 = coordinatesArrays.slice(0, 1025 + i).reduce((obj, coord) => {
-        // corrupted coordinates are initialized at -Infinity
         obj[coord[1]] ? obj[coord[1]][coord[0]] = -Infinity : obj[coord[1]] = {[coord[0]] : -Infinity};
         return obj;
     }, {})
-    const shortestRoute = findShortestPath(coordinates2, 0,0,0,70,70);
-    if (shortestRoute) continue;
+    if (findShortestPath(coordinates2, 0,0,0,70,70)) continue;
     console.log(allCorruptedCoordinates[i])
     break;
 }
