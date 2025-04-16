@@ -34,10 +34,10 @@ const findShortestPath = (coordinates, y, x, currPathLength, destinationY, desti
         [y, x - 1],
     ].forEach(([y, x]) => {
         if (y < 0 || y > destinationY || x < 0 || x > destinationX || (coordinates[y]?.[x] <= (currPathLength + 1))) return;
-        findShortestPath(shortestPath, coordinates, y, x, currPathLength + 1, destinationY, destinationX, shortestPath);
+        findShortestPath(coordinates, y, x, currPathLength + 1, destinationY, destinationX, shortestPath);
     })
     
-    return shortestPath[0]
+    return shortestPath[0];
 }
 
-console.log(findShortestPath(coordinates, 0, 0, 0, 70, 70));
+console.log(findShortestPath(coordinates, 0,0,0,70,70));
