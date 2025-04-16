@@ -41,15 +41,5 @@ const findShortestPath = (shortestPath, coordinates, y, x, currPathLength, desti
     
 }
 
-findShortestPath(shortestPath, coordinates, 0,0,0,70,70);
+findShortestPath(shortestPath, coordinates, 0, 0, 0, 70, 70);
 console.log(shortestPath[0])
-
-
-// const testShortestPath = [0]
-// const testCoord = {
-//     0 : {
-//         1 : -Infinity
-//     }
-// }
-// findShortestPath(testShortestPath, testCoord, 0,0,0,1,1);
-// console.log(testShortestPath[0])
