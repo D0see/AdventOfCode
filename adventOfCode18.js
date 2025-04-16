@@ -20,10 +20,8 @@ const coordinates = coordinatesArrays.slice(0, 1024).reduce((obj, coord) => {
     return obj;
 }, {})
 
-const shortestPath = [0];
-
 // recursive function to find the shortest path
-const findShortestPath = (shortestPath, coordinates, y, x, currPathLength, destinationY, destinationX) => {
+const findShortestPath = (coordinates, y, x, currPathLength, destinationY, destinationX, shortestPath = [0]) => {
     coordinates[y] ? coordinates[y][x] = currPathLength : coordinates[y] = {[x] : currPathLength};
 
     if (x === destinationX && y === destinationY) 
@@ -36,10 +34,10 @@ const findShortestPath = (shortestPath, coordinates, y, x, currPathLength, desti
         [y, x - 1],
     ].forEach(([y, x]) => {
         if (y < 0 || y > destinationY || x < 0 || x > destinationX || (coordinates[y]?.[x] <= (currPathLength + 1))) return;
-        findShortestPath(shortestPath, coordinates, y, x, currPathLength + 1, destinationY, destinationX);
+        findShortestPath(shortestPath, coordinates, y, x, currPathLength + 1, destinationY, destinationX, shortestPath);
     })
     
+    return shortestPath[0]
 }
 
-findShortestPath(shortestPath, coordinates, 0, 0, 0, 70, 70);
-console.log(shortestPath[0])
+console.log(findShortestPath(coordinates, 0, 0, 0, 70, 70));
