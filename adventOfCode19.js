@@ -26,8 +26,10 @@ const OrderIsValid = (
   bricks,
   maxBrickLength,
   result = [false],
-  impossibleOrders
+  count = [0]
 ) => {
+ count[0]++;
+    if (count[0] > 1000000) {return result[0] = false;}
   if (result[0]) return result[0];
   if (!order.length) {
     return (result[0] = true);
@@ -41,28 +43,31 @@ const OrderIsValid = (
         bricks,
         maxBrickLength,
         result,
-        impossibleOrders
+        count
       );
     }
   }
   return result[0];
 };
 
-// let result = 0;
-// for (const order of orders) {
-//   console.count("order");
-//   if (OrderIsValid(order, bricks, maxBrickLength, impossibleOrders)) result++;
-// }
-
 let result = 0;
-if (
-  OrderIsValid(
-    "uwrbubuwrwgbubguguurwwurbrurbwbwwwgbrwwwg",
-    bricks,
-    8,
-    impossibleOrders
-  )
-)
-  result++;
+for (const order of orders) {
+  console.count("order");
+  if (OrderIsValid(order, bricks, maxBrickLength)) result++;
+}
+
+
+// TEST CASE FOR WRONG ORDER
+// let result = 0;
+// if (
+//   OrderIsValid(
+//     "uwrbubuwrwgbubguguurwwurbrurbwbwwwgbrwwwg",
+//     bricks,
+//     8,
+//   )
+// )
+//   result++;
 
 console.log(result);
+
+// this is insanely stupid & hacky but...
