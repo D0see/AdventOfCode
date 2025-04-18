@@ -50,7 +50,6 @@ const findShortestPath = (map, y, x, alreadyVisited = {}) => {
 // for (let y = 1; y < map.length - 1; y++) {
 //     for (let x = 1; x < map[0].length - 1; x++) {
 //         if (map[y][x] !== '#') continue;
-//         console.log(y," ", x)
 //         map[y][x] = '.';
 //         const fastestPath = findShortestPath(map, startY, startX);
 //         if ((fastestPathNoCheats - fastestPath) >= 100) result++;
@@ -60,64 +59,90 @@ const findShortestPath = (map, y, x, alreadyVisited = {}) => {
 
 // console.log(result);
 
+
+
+
 // PART 2
 
 // find the cost to reach every square from the start
 
-const [endingY, endingX] = findPosition(map, "E");
-// removes the original ending
-map[endingY][endingX] = ".";
-
-const costToReachFromStart = {};
-
 //builds an hashmap of the cost of reaching every square from the start
-for (let y = 1; y < map.length - 1; y++) {
-  for (let x = 1; x < map[0].length - 1; x++) {
-    if (map[y][x] === "#" || map[y][x] === "S") continue;
-    map[y][x] = "E";
-    const fastestPath = findShortestPath(map, startY, startX);
-    costToReachFromStart[y]
-      ? (costToReachFromStart[y][x] = fastestPath)
-      : (costToReachFromStart[y] = { [x]: fastestPath });
-    map[y][x] = ".";
-  }
+const getCostToReachEverySquareFromStart = (inputtedMap) => {
+    const map = JSON.parse(JSON.stringify(inputtedMap));
+    
+    // removes the original ending
+    const [startY, startX] = findPosition(map, "S");
+    const [endingY, endingX] = findPosition(map, "E");
+    map[endingY][endingX] = ".";
+    const costToReachFromStart = {};
+    for (let y = 1; y < map.length - 1; y++) {
+        for (let x = 1; x < map[0].length - 1; x++) {
+          if (map[y][x] === "#" || map[y][x] === "S") continue;
+          map[y][x] = "E";
+          const fastestPath = findShortestPath(map, startY, startX);
+          costToReachFromStart[y]
+            ? (costToReachFromStart[y][x] = fastestPath)
+            : (costToReachFromStart[y] = { [x]: fastestPath });
+          map[y][x] = ".";
+        }
+      }
+    return costToReachFromStart;
 }
-console.log(costToReachFromStart);
 
-map[endingY][endingX] = "E";
+// const costToReachFromStart = getCostToReachEverySquareFromStart(map);
+// console.log(costToReachFromStart);
 
-// find the cost to reach the end from every square
 
-// removes the original start
-map[startY][startX] = ".";
-
-const costToReachEndFrom = {};
+// // find the cost to reach the end from every square
 
 //builds an hashmap of the cost of reaching the end from evert square
-for (let y = 1; y < map.length - 1; y++) {
-  for (let x = 1; x < map[0].length - 1; x++) {
-    if (map[y][x] === "#" || map[y][x] === "E") continue;
-    map[y][x] = "S";
-    const fastestPath = findShortestPath(map, y, x);
-    costToReachEndFrom[y]
-      ? (costToReachEndFrom[y][x] = fastestPath)
-      : (costToReachEndFrom[y] = { [x]: fastestPath });
-    map[y][x] = ".";
-  }
+const getCostToReachEndFromSquare = (inputtedMap) => {
+    const map = JSON.parse(JSON.stringify(inputtedMap));
+    // removes the original start
+    const [endingY, endingX] = findPosition(map, "S");
+    map[endingY][endingX] = ".";
+    const costToReachEndFrom = {};
+    for (let y = 1; y < map.length - 1; y++) {
+        for (let x = 1; x < map[0].length - 1; x++) {
+            if (map[y][x] === "#" || map[y][x] === "E") continue;
+            map[y][x] = "S";
+            const fastestPath = findShortestPath(map, y, x);
+            costToReachEndFrom[y]
+            ? (costToReachEndFrom[y][x] = fastestPath)
+            : (costToReachEndFrom[y] = { [x]: fastestPath });
+            map[y][x] = ".";
+        }
+    }
+    return costToReachEndFrom;
 }
-console.log(costToReachEndFrom);
 
-map[startY][startX] = "S";
-// find the lowest score when adding the first two (at most at 20 distance)
+// const costToReachEndFrom = getCostToReachEndFromSquare(map);
+// console.log(costToReachEndFrom);
 
-// const test = [
-//   ["#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#"],
-//   ["#", "S", ".", "#", ".", ".", ".", ".", ".", ".", "#"],
-//   ["#", ".", ".", ".", ".", ".", "#", ".", ".", ".", "#"],
-//   ["#", ".", ".", ".", ".", ".", "#", ".", ".", "E", "#"],
-//   ["#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#"],
-// ];
+const test = [
+  ["#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#"],
+  ["#", "S", ".", "#", ".", ".", ".", ".", ".", ".", "#"],
+  ["#", ".", ".", ".", ".", ".", "#", ".", ".", ".", "#"],
+  ["#", ".", ".", ".", ".", ".", "#", ".", ".", "E", "#"],
+  ["#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#"],
+];
 
-// const visitedInBestPath = findShortestPath(test, 1, 1);
+const shortestPathScore = findShortestPath(test, 1, 1);
+console.log(shortestPathScore);
 
-// console.log(visitedInBestPath);
+const costToReachEverySquareFromStart = getCostToReachEverySquareFromStart(test);
+console.log(costToReachEverySquareFromStart);
+
+const CostToReachEndFromSquare = getCostToReachEndFromSquare(test);
+console.log(CostToReachEndFromSquare);
+
+const getBestShortcut = (costToReachEverySquareFromStart, CostToReachEndFromSquare, shortcutLen, bestNonShortCutPathScore) => {
+    let bestShorcut = bestNonShortCutPathScore;
+    for (const y of Object.keys(costToReachEverySquareFromStart)) {
+        for (const x of Object.keys(costToReachEverySquareFromStart[y])) {
+            console.log(y, " ",x)
+        }
+    }
+}
+
+getBestShortcut(costToReachEverySquareFromStart, CostToReachEndFromSquare, 20, shortestPathScore);
