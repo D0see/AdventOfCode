@@ -49,3 +49,18 @@ gameLoop :for (const game of games) {
 }
 
 console.log(result);
+
+// PART 2
+
+let result2 = 0;
+
+for (const game of games) {
+    const {number, highestNumPerColor} = game;
+    let currPower = 1;
+    for (const color of Object.keys(highestNumPerColor)) {
+        currPower *= highestNumPerColor[color];
+    }
+    result2 += currPower;
+}
+
+console.log(result2);
