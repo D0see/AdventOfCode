@@ -78,7 +78,6 @@ for (let i = 0; i < currNodes.length; i++) {
         }
     }
 }
-console.log(currNodes)
 
 console.log(math.lcm(...currNodes))
 
