@@ -39,4 +39,20 @@ const result = grids.reduce((acc, grid) => {
 
 console.log(result);
 
+//PART 2
 
+for (const twoDArr of grids) {
+    for (let i = 0; i < twoDArr.length; i++) {
+        const currVal = (twoDArr[i]?.[0] || 0) - (twoDArr[i - 1]?.[0] || 0);
+        twoDArr[i].unshift(
+            currVal
+        )
+    }
+}
+
+const result2 = grids.reduce((acc, grid) => {
+    acc += grid[grid.length - 1][0];
+    return acc;
+}, 0)
+
+console.log(result2);
