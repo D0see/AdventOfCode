@@ -20,18 +20,14 @@ function getPatternSequence(sequence) {
     const seqPattern = [];
     let currBlock = ''
     for (const symbol of sequence) {
-        if (symbol === '?') {
-            //throw new Error('incomplete sequence');
-            return null;
-        }
         if (!(symbol === '#')) {
-            currBlock ? seqPattern.push(currBlock.length) : '';
+            if (currBlock) seqPattern.push(currBlock.length);
             currBlock = '';
         } else {
             currBlock += '#';
         }
     }
-    currBlock ? seqPattern.push(currBlock.length) : '';
+    if (currBlock) seqPattern.push(currBlock.length);
     return seqPattern.join('-');
 }
 
@@ -39,14 +35,14 @@ function patternCorrespondsToSequence(pattern, sequence) {
     return getPatternSequence(pattern) === sequence.join('-');
 }
 
-function getPossibleSequences(pattern, sequence, patternIndex = 0, numOfSequences = [0]) {
-    if (patternCorrespondsToSequence(pattern, sequence)) {
+function getPossibleSequences(pattern, sequence, lastQMIndex, patternIndex = 0, numOfSequences = [0]) {
+    if (patternIndex > lastQMIndex && patternCorrespondsToSequence(pattern, sequence)) {
         return numOfSequences[0]++;
     }
     for (let i = patternIndex; i < pattern.length; i++) {
         if (pattern[i] === '?') {
-            getPossibleSequences(pattern.toSpliced(i, 1, '#'), sequence, i + 1, numOfSequences);
-            getPossibleSequences(pattern.toSpliced(i, 1, '.'), sequence, i + 1, numOfSequences);
+            getPossibleSequences(pattern.toSpliced(i, 1, '#'), sequence, lastQMIndex, i + 1, numOfSequences);
+            getPossibleSequences(pattern.toSpliced(i, 1, '.'), sequence, lastQMIndex, i + 1, numOfSequences);
             break;
         }
     }
@@ -57,7 +53,8 @@ let result = 0;
 
 for (const obj of parsedInput) {
     const { pattern, sequence } = obj;
-    let curr = getPossibleSequences(pattern, sequence);
+    const lastQMIndex = pattern.findLastIndex(char => char === '?');
+    let curr = getPossibleSequences(pattern, sequence, lastQMIndex);
     result += curr;
 }
 
