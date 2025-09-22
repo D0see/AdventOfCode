@@ -20,7 +20,8 @@ function patternSequenceToBaseSequence(patternSequence, sequence) {
     return patternSequence.slice(0, -1) === sequence;
 }
 
-function getPossibleSequences(pattern, sequence, lastQMIndex, patternSequence = '', currBlockLength = 0, patternIndex = 0, numOfSequences = [0]) {
+function getPossibleSequences(pattern, sequence, patternSequence = '', currBlockLength = 0, patternIndex = 0, numOfSequences = [0]) {
+    if (!sequence.startsWith(patternSequence.slice(0, -1))) return;
     for (patternIndex; patternIndex < pattern.length; patternIndex++) {
         if (pattern[patternIndex] === '#') {
             currBlockLength++;
@@ -30,15 +31,17 @@ function getPossibleSequences(pattern, sequence, lastQMIndex, patternSequence = 
             currBlockLength = 0;
         }
         else if (pattern[patternIndex] === '?') {
-            getPossibleSequences(pattern, sequence, lastQMIndex, patternSequence, currBlockLength + 1, patternIndex + 1, numOfSequences);
+            getPossibleSequences(pattern, sequence, patternSequence, currBlockLength + 1, patternIndex + 1, numOfSequences);
             if (currBlockLength) patternSequence += currBlockLength + '-';
-            getPossibleSequences(pattern, sequence, lastQMIndex, patternSequence, 0, patternIndex + 1, numOfSequences);
+            getPossibleSequences(pattern, sequence, patternSequence, 0, patternIndex + 1, numOfSequences);
             break;
         }
     }
     if (patternIndex === pattern.length) {
         if (currBlockLength) patternSequence += currBlockLength + '-';
-        if (patternSequenceToBaseSequence(patternSequence, sequence)) return numOfSequences[0]++;
+        if (patternSequenceToBaseSequence(patternSequence, sequence)) {
+            return numOfSequences[0]++;
+        }
     }
     return numOfSequences[0];
 }
@@ -47,20 +50,26 @@ let result = 0;
 
 for (const obj of parsedInput) {
     const { pattern, sequence } = obj;
-    const lastQMIndex = pattern.findLastIndex(char => char === '?');
-    let curr = getPossibleSequences(pattern, sequence.join('-'), lastQMIndex);
+    let curr = getPossibleSequences(pattern, sequence.join('-'));
     result += curr;
 }
 
 console.log(result);
 
-//PART 2
+// PART 2
 
-const parsedInput2 = rawInput.split('\r\n').map(row => {
-    const currRow = row.split(' ');
-    currRow[0] = currRow[0].split('');
-    currRow[1] = currRow[1].split(',');
-    const pattern = currRow[0]; // time 5
-    const sequence = currRow[1]; // times 5
-    
-});
+let result2 = 0;
+
+for (const obj of parsedInput) {
+    let { pattern, sequence } = obj;
+    let newPattern = [...pattern];
+    let newSequence = [...sequence];
+    for (let i = 0; i < 4; i++) {
+        newSequence = newSequence.concat(sequence);
+        newPattern = newPattern.concat('?').concat(pattern);
+    }
+    result2 += getPossibleSequences(newPattern, newSequence.join('-'));
+    console.count('obj');
+}
+
+console.log(result2);
