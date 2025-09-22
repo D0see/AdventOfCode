@@ -16,35 +16,29 @@ const parsedInput = rawInput.split('\r\n').map(row => {
     }
 });
 
-function getPatternSequence(sequence) {
-    const seqPattern = [];
-    let currBlock = ''
-    for (const symbol of sequence) {
-        if (!(symbol === '#')) {
-            if (currBlock) seqPattern.push(currBlock.length);
-            currBlock = '';
-        } else {
-            currBlock += '#';
+function patternSequenceToBaseSequence(patternSequence, sequence) {
+    return patternSequence.slice(0, -1) === sequence;
+}
+
+function getPossibleSequences(pattern, sequence, lastQMIndex, patternSequence = '', currBlockLength = 0, patternIndex = 0, numOfSequences = [0]) {
+    for (patternIndex; patternIndex < pattern.length; patternIndex++) {
+        if (pattern[patternIndex] === '#') {
+            currBlockLength++;
         }
-    }
-    if (currBlock) seqPattern.push(currBlock.length);
-    return seqPattern.join('-');
-}
-
-function patternCorrespondsToSequence(pattern, sequence) {
-    return getPatternSequence(pattern) === sequence.join('-');
-}
-
-function getPossibleSequences(pattern, sequence, lastQMIndex, patternIndex = 0, numOfSequences = [0]) {
-    if (patternIndex > lastQMIndex && patternCorrespondsToSequence(pattern, sequence)) {
-        return numOfSequences[0]++;
-    }
-    for (let i = patternIndex; i < pattern.length; i++) {
-        if (pattern[i] === '?') {
-            getPossibleSequences(pattern.toSpliced(i, 1, '#'), sequence, lastQMIndex, i + 1, numOfSequences);
-            getPossibleSequences(pattern.toSpliced(i, 1, '.'), sequence, lastQMIndex, i + 1, numOfSequences);
+        else if (pattern[patternIndex] === '.') {
+            if (currBlockLength) patternSequence += currBlockLength + '-';
+            currBlockLength = 0;
+        }
+        else if (pattern[patternIndex] === '?') {
+            getPossibleSequences(pattern, sequence, lastQMIndex, patternSequence, currBlockLength + 1, patternIndex + 1, numOfSequences);
+            if (currBlockLength) patternSequence += currBlockLength + '-';
+            getPossibleSequences(pattern, sequence, lastQMIndex, patternSequence, 0, patternIndex + 1, numOfSequences);
             break;
         }
+    }
+    if (patternIndex === pattern.length) {
+        if (currBlockLength) patternSequence += currBlockLength + '-';
+        if (patternSequenceToBaseSequence(patternSequence, sequence)) return numOfSequences[0]++;
     }
     return numOfSequences[0];
 }
@@ -54,7 +48,7 @@ let result = 0;
 for (const obj of parsedInput) {
     const { pattern, sequence } = obj;
     const lastQMIndex = pattern.findLastIndex(char => char === '?');
-    let curr = getPossibleSequences(pattern, sequence, lastQMIndex);
+    let curr = getPossibleSequences(pattern, sequence.join('-'), lastQMIndex);
     result += curr;
 }
 
