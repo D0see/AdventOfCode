@@ -39,81 +39,144 @@ const photons = [
     }
 ];
 
-const illuminatedSquares = {};
+function illuminateGrid(grid, photons) {
+    photons = structuredClone(photons);
+    const illuminatedSquares = {};
 
-// function illuminateGrid(grid, startingPhoton) {
-//     const illuminatedSquares = {};
+    while (true) {
+        for (const [index, photon] of photons.entries()) {
+            const { direction, currY, currX } = photon;
+            const { velY, velX } = direction;
 
-// }
+            if (illuminatedSquares[`${currY}-${currX}`]) {
+                //exit condition
+                if (illuminatedSquares[`${currY}-${currX}`][direction.dir]) {
+                    photons.splice(index, 1);
+                    break;
+                } else {
+                    illuminatedSquares[`${currY}-${currX}`][direction.dir] = true;
+                }
+            } else {
+                illuminatedSquares[`${currY}-${currX}`] = {[direction.dir] : true};
+            }
 
-while (true) {
-    for (const [index, photon] of photons.entries()) {
-        const { direction, currY, currX } = photon;
-        const { velY, velX } = direction;
+            //updates position
+            photon.currY = currY + velY;
+            photon.currX = currX + velX;
 
-        if (illuminatedSquares[`${currY}-${currX}`]) {
-            //exit condition
-            if (illuminatedSquares[`${currY}-${currX}`][direction.dir]) {
+            const nextSquare = grid[currY + velY]?.[currX + velX];
+            if (!nextSquare) {
                 photons.splice(index, 1);
-                break;
-            } else {
-                illuminatedSquares[`${currY}-${currX}`][direction.dir] = true;
+            // handles special cases : redirection and cloning
+            } else if (nextSquare === '/') {
+                if (photon.direction.dir === 'up') {
+                    photon.direction = directions.right;
+                } else if (photon.direction.dir === 'down') {
+                    photon.direction = directions.left;
+                } else if (photon.direction.dir === 'left') {
+                    photon.direction = directions.down;
+                } else {
+                    photon.direction = directions.up;
+                }
+
+            } else if (nextSquare === '\\') {
+                if (photon.direction.dir === 'up') {
+                    photon.direction = directions.left;
+                } else if (photon.direction.dir === 'down') {
+                    photon.direction = directions.right;
+                } else if (photon.direction.dir === 'left') {
+                    photon.direction = directions.up;
+                } else {
+                    photon.direction = directions.down;
+                }
+
+            } else if (nextSquare === '|') {
+                if (['left', 'right'].includes(photon.direction.dir)) {
+                    const upPhoton = structuredClone(photon);
+                    upPhoton.direction = directions.up;
+                    const downPhoton = structuredClone(photon);
+                    downPhoton.direction = directions.down;
+                    photons.splice(index, 1, upPhoton, downPhoton);
+                }
+            } else if (nextSquare === '-') {
+                if (['up', 'down'].includes(photon.direction.dir)) {
+                    const leftPhoton = structuredClone(photon);
+                    leftPhoton.direction = directions.left;
+                    const rightPhoton = structuredClone(photon);
+                    rightPhoton.direction = directions.right;
+                    photons.splice(index, 1, leftPhoton, rightPhoton);
+                } 
             }
-        } else {
-            illuminatedSquares[`${currY}-${currX}`] = {[direction.dir] : true};
         }
-
-        //updates position
-        photon.currY = currY + velY;
-        photon.currX = currX + velX;
-
-        const nextSquare = grid[currY + velY]?.[currX + velX];
-        if (!nextSquare) {
-            photons.splice(index, 1);
-        // handles special cases : redirection and cloning
-        } else if (nextSquare === '/') {
-            if (photon.direction.dir === 'up') {
-                photon.direction = directions.right;
-            } else if (photon.direction.dir === 'down') {
-                photon.direction = directions.left;
-            } else if (photon.direction.dir === 'left') {
-                photon.direction = directions.down;
-            } else {
-                photon.direction = directions.up;
-            }
-
-        } else if (nextSquare === '\\') {
-            if (photon.direction.dir === 'up') {
-                photon.direction = directions.left;
-            } else if (photon.direction.dir === 'down') {
-                photon.direction = directions.right;
-            } else if (photon.direction.dir === 'left') {
-                photon.direction = directions.up;
-            } else {
-                photon.direction = directions.down;
-            }
-
-        } else if (nextSquare === '|') {
-            if (['left', 'right'].includes(photon.direction.dir)) {
-                const upPhoton = structuredClone(photon);
-                upPhoton.direction = directions.up;
-                const downPhoton = structuredClone(photon);
-                downPhoton.direction = directions.down;
-                photons.splice(index, 1, upPhoton, downPhoton);
-            }
-        } else if (nextSquare === '-') {
-            if (['up', 'down'].includes(photon.direction.dir)) {
-                const leftPhoton = structuredClone(photon);
-                leftPhoton.direction = directions.left;
-                const rightPhoton = structuredClone(photon);
-                rightPhoton.direction = directions.right;
-                photons.splice(index, 1, leftPhoton, rightPhoton);
-            } 
-        }
+        if (!photons.length) break;
     }
-    if (!photons.length) break;
+    return illuminatedSquares;
 }
+
+const illuminatedSquares = illuminateGrid(grid, photons);
 
 let result = Object.keys(illuminatedSquares).length - 1;
 
 console.log(result);
+
+// PART 2
+
+let result2 = -Infinity;
+
+for (let y = 0; y < grid.length; y++) {
+    const startingPhoton = [
+        {
+            direction : directions.right,
+            currY : y,
+            currX : -1
+        }
+    ];
+    const illuminatedSquares = illuminateGrid(grid, startingPhoton);
+
+    let result = Object.keys(illuminatedSquares).length - 1;
+    result2 = result2 > result ? result2 : result;
+}
+
+for (let y = 0; y < grid.length; y++) {
+    const startingPhoton = [
+        {
+            direction : directions.left,
+            currY : y,
+            currX : grid[0].length
+        }
+    ];
+    const illuminatedSquares = illuminateGrid(grid, startingPhoton);
+
+    let result = Object.keys(illuminatedSquares).length - 1;
+    result2 = result2 > result ? result2 : result;
+}
+
+for (let x = 0; x < grid[0].length; x++) {
+    const startingPhoton = [
+        {
+            direction : directions.down,
+            currY : -1,
+            currX : x
+        }
+    ];
+    const illuminatedSquares = illuminateGrid(grid, startingPhoton);
+
+    let result = Object.keys(illuminatedSquares).length - 1;
+    result2 = result2 > result ? result2 : result;
+}
+
+for (let x = 0; x < grid[0].length; x++) {
+    const startingPhoton = [
+        {
+            direction : directions.up,
+            currY : grid.length,
+            currX : x
+        }
+    ];
+    const illuminatedSquares = illuminateGrid(grid, startingPhoton);
+
+    let result = Object.keys(illuminatedSquares).length - 1;
+    result2 = result2 > result ? result2 : result;
+}
+
+console.log(result2);
