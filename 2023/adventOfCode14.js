@@ -1,5 +1,4 @@
 const fs = require("fs");
-const { parse } = require("path");
 
 // INPUT GATHERING & CLEANING
 
@@ -87,6 +86,8 @@ function cycle(grid) {
 
 // so im guessing something like (1 000 000 000 - 92) % 27 
 // so 17 cycles to go
+
+//here we find the cycle
 const boardPosition = {};
 let cycleStartPos;
 let counter = 0;
