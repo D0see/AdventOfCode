@@ -17,8 +17,6 @@ for (let y = 1; y < grid.length; y++) {
 }
 
 const minHeat = [naiveMinHeat * 1.5];
-//used for part2
-const minHeat2 = [naiveMinHeat * 1.5];
 
 visitedSquares = {}
 function traverseGrid(grid, currY = 0, currX = 0, currDirection = [null, 0], cumulatedHeat = 0) {
@@ -74,3 +72,65 @@ traverseGrid(grid);
 console.log(minHeat[0]);
 
 // PART 2
+
+const minHeat2 = [naiveMinHeat * 1.5];
+
+visitedSquares2 = {};
+
+function traverseGrid2(grid, currY = 0, currX = 0, currDirection = [null, 0], cumulatedHeat = 0) {
+    if (cumulatedHeat >= minHeat2[0]) return;
+
+    if (currY === grid.length - 1 && currX === grid[0].length - 1) {
+        if (currDirection[1] < 4) return;
+        minHeat2[0] = cumulatedHeat < minHeat2[0] ? cumulatedHeat : minHeat2[0];
+        return;
+    }
+
+    //visitedSquares could take into account position and direction + number of step in that direction.
+    const currSquareData = visitedSquares2[`${currY}-${currX}-${currDirection[0]}-${currDirection[1]}`];
+    if (currSquareData !== undefined && currSquareData <= cumulatedHeat) {
+        return;
+    } else {
+        visitedSquares2[`${currY}-${currX}-${currDirection[0]}-${currDirection[1]}`] = cumulatedHeat;
+    }
+
+        // if next position exists
+    if (grid[currY - 1]?.[currX] 
+        // the crucible cant go backwards
+        && currDirection[0] !== 'down'
+        // the crucible must have moved 4 squares in his currentDir before turning
+        && (currDirection[0] === null || currDirection[0] === 'up' || currDirection[1] >= 4)
+        // currDirection isnt both this one and hasnt been taken 10 times in a row
+        && !(currDirection[0] === 'up' && currDirection[1] === 10)) {
+            const newDir = ['up', currDirection[0] === 'up' ? currDirection[1] + 1 : 1];
+            traverseGrid2(grid, currY - 1, currX, newDir, cumulatedHeat + grid[currY - 1][currX]);
+    } 
+
+    if (grid[currY + 1]?.[currX] 
+        && currDirection[0] !== 'up'
+        && (currDirection[0] === null || currDirection[0] === 'down' || currDirection[1] >= 4)
+        && !(currDirection[0] === 'down' && currDirection[1] === 10)) {
+            const newDir = ['down', currDirection[0] === 'down' ? currDirection[1] + 1 : 1];
+            traverseGrid2(grid, currY + 1, currX, newDir, cumulatedHeat + grid[currY + 1][currX]);
+    }
+
+    if (grid[currY]?.[currX - 1] 
+        && currDirection[0] !== 'right'
+        && (currDirection[0] === null || currDirection[0] === 'left' || currDirection[1] >= 4)
+        && !(currDirection[0] === 'left' && currDirection[1] === 10)) {
+            const newDir = ['left', currDirection[0] === 'left' ? currDirection[1] + 1 : 1];
+            traverseGrid2(grid, currY, currX - 1, newDir, cumulatedHeat + grid[currY][currX - 1]);
+    }
+
+    if (grid[currY]?.[currX + 1] 
+        && currDirection[0] !== 'left'
+        && (currDirection[0] === null || currDirection[0] === 'right' || currDirection[1] >= 4)
+        && !(currDirection[0] === 'right' && currDirection[1] === 10)) {
+            const newDir = ['right', currDirection[0] === 'right' ? currDirection[1] + 1 : 1];
+            traverseGrid2(grid, currY, currX + 1, newDir, cumulatedHeat + grid[currY][currX + 1]);
+    }   
+}
+
+traverseGrid2(grid);
+
+console.log(minHeat2[0]);
