@@ -37,18 +37,18 @@ const pieces = parsedInput.slice(parsedInput.findIndex(row => !row) + 1)
     return piece;
 })
 
-function executeWorkFlow(piece, workflow) {
+function executeWorkflow(piece, workflow) {
     for (const order of workflow) {
         if (typeof order === 'string') {
             if (order === 'A') return true;
             if (order === 'R') return false;
-            return executeWorkFlow(piece, workflows[order]);
+            return executeWorkflow(piece, workflows[order]);
         } else {
             const { piecePart, comparator, comparingValue, ifTrue } = order;
             if (eval(`${piece[piecePart]} ${comparator} ${comparingValue}`)) {
                 if (ifTrue === 'A') return true;
                 if (ifTrue === 'R') return false;
-                return executeWorkFlow(piece, workflows[ifTrue]);
+                return executeWorkflow(piece, workflows[ifTrue]);
             }
         }
     }
@@ -57,7 +57,7 @@ function executeWorkFlow(piece, workflow) {
 let result = 0;
 
 for (const piece of pieces) {
-    if (executeWorkFlow(piece, workflows.in)) {
+    if (executeWorkflow(piece, workflows.in)) {
         result += Object.values(piece).reduce((acc, val) => acc + val, 0);
     }
 }
@@ -70,8 +70,82 @@ console.log(result);
 // {x : {min : 0 ,max : Infinity} , m : {min : 0 ,max : Infinity}, 
 //  a : {min : 0 ,max : Infinity}, s : {min : 0 ,max : Infinity} }
 // for each workflows if i can pass the order with my current ranges i will copy my object
-// and do a recursive call with the next workflow while updating the specified range to a new Min or Max if necessary
+// and do a recursive call with the next workflow while updating the specified range 
+// to a new Min or Max if necessary
 // so here for the first order i would do recursiveCall(newPieceWithArangeAtMin2591, rtpWorkFlow)
 
-// once this is done i just calculate the ranges based on the ranges of all objects xmas values
+// once this is done i just calculate the ranges based on the ranges of all objects 
+// who ended up passing xmas values
 // then i just multiply the ranges values so x * m * a * s
+
+const basePiece = {
+    x : {min : 1 ,max : 4000}, 
+    m : {min : 1 ,max : 4000}, 
+    a : {min : 1 ,max : 4000}, 
+    s : {min : 1 ,max : 4000} 
+}
+
+//here lies the bug
+function traverseWorkflows(validPieces, basePiece, workflow) {
+    let currPiece = structuredClone(basePiece);
+    for (const order of workflow) {
+        if (typeof order === 'string') {
+            if (order === 'A') {
+                validPieces.push(structuredClone(currPiece));
+                return;
+            }
+            if (order === 'R') return;
+            return traverseWorkflows(validPieces, currPiece, workflows[order]);
+        } else {
+            const { piecePart, comparator, comparingValue, ifTrue } = order;
+            if (comparator === '>') {
+                if (currPiece[piecePart].max > comparingValue) {
+                    let tempPiece = structuredClone(currPiece);
+                    tempPiece[piecePart].min = comparingValue + 1;
+                    if (ifTrue === 'R') return;
+                    if (ifTrue === 'A') {
+                        validPieces.push(tempPiece);
+                        return;
+                    }
+                    traverseWorkflows(validPieces, tempPiece, workflows[ifTrue]);
+                    //updates currPiece
+                    currPiece[piecePart].max = comparingValue;
+                }
+            } else {
+                if (currPiece[piecePart].min < comparingValue) {
+                    let tempPiece = structuredClone(currPiece);
+                    tempPiece[piecePart].max = comparingValue - 1;
+                    if (ifTrue === 'R') return;
+                    if (ifTrue === 'A') {
+                        validPieces.push(tempPiece);
+                        return;
+                    }
+                    traverseWorkflows(validPieces, tempPiece, workflows[ifTrue]);
+                    //updates currPiece
+                    currPiece[piecePart].min = comparingValue;
+                }
+            }
+        }
+    }
+}
+
+const validPieces = [];
+
+traverseWorkflows(validPieces, basePiece, workflows.in);
+
+console.log(validPieces)
+
+let result2 = 0;
+
+for (const piece of validPieces) {
+    currResult = 1;
+    for (const {min, max} of Object.values(piece) ) {
+        currResult *= (max - min);
+    }
+    result2 += currResult
+}
+
+console.log(result2);
+
+//256000000000000
+//92866767062611
