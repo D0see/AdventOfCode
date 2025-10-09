@@ -10,6 +10,12 @@
     fclose($fh);
 
     //PART 1
+    function calcPriority(string &$symbol): int {
+        return ord($symbol) >= 97 ? 
+        intval(ord($symbol)) - 96 : 
+        intval(ord($symbol)) - 38;
+    }
+
     $result = 0;
 
     for ($i = 0; $i < count($inputArr); $i++) { 
@@ -34,12 +40,7 @@
         }
 
         foreach($presentInBothArr as $key => $value) {
-            if (ord($key) >= 97) {
-                $code = intval(ord($key)) - 96;
-            } else {
-                $code = intval(ord($key)) - 64 + 26;
-            }
-            $result += $code;
+            $result += calcPriority($key);
         }
     }
 
@@ -61,12 +62,7 @@
             foreach(array_slice($elves, 1) as $elve) {
                 if (!key_exists($supply, $elve)) continue 2; 
             }
-            if (ord($supply) >= 97) {
-                $code = intval(ord($supply)) - 96;
-            } else {
-                $code = intval(ord($supply)) - 64 + 26;
-            }
-            $result += $code;
+            $result += calcPriority($supply);
             break;
         }
     }
