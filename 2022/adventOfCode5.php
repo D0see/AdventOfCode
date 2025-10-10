@@ -15,10 +15,10 @@
         if ($isAtTopStack) {
             array_push($stacksStrings, str_split($line));
         } else {
-            $temp = preg_split("(\s|\r)",$line);
+            $values = preg_split("(\s|\r)",$line);
             $order = []; 
-            foreach ($temp as $str) {
-                if (is_numeric($str)) array_push($order, $str);
+            foreach ($values as $value) {
+                if (is_numeric($value)) array_push($order, key_exists(0, $order) ? $value - 1 : $value);
             }
             array_push($orders, $order);
         }
@@ -29,9 +29,7 @@
 
     //initialises stacks
     $stacks = [];
-    for ($i = 0; $i < $numberOfStacks; $i++) {
-        array_push($stacks, []);
-    }
+    for ($i = 0; $i < $numberOfStacks; $i++) array_push($stacks, []);
 
     foreach($stacksStrings as $index => $arr) {
         if ($index === ($numberOfStacks - 1)) break;
@@ -49,9 +47,9 @@
     foreach($orders as $order) {
         [$amount, $from, $to] = $order;
         for ($i = 0; $i < $amount; $i++) {
-            $currBox = array_pop($stacks[$from - 1]);
+            $currBox = array_pop($stacks[$from]);
             if (is_null($currBox)) break;  
-            array_push($stacks[$to - 1], $currBox);
+            array_push($stacks[$to], $currBox);
         }
     }
 
@@ -64,11 +62,11 @@
 
     foreach($orders as $order) {
         [$amount, $from, $to] = $order;
-        $movedBoxes = array_slice($stacks2[$from - 1], count($stacks2[$from - 1]) - $amount);
+        $movedBoxes = array_slice($stacks2[$from], count($stacks2[$from]) - $amount);
         //update $from stack
-        $stacks2[$from - 1] = array_slice($stacks2[$from - 1], 0, count($stacks2[$from - 1]) - $amount);
+        $stacks2[$from] = array_slice($stacks2[$from], 0, count($stacks2[$from]) - $amount);
         //update $to stack
-        $stacks2[$to - 1] = array_merge($stacks2[$to - 1], $movedBoxes);
+        $stacks2[$to] = array_merge($stacks2[$to], $movedBoxes);
     }
 
     foreach($stacks2 as $stack) {
