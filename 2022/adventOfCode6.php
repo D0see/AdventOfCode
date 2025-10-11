@@ -11,6 +11,7 @@
 
     //PART 1
     function getFirstMarkerAppearanceEndIndex(string &$inputString, int $markerLength): int {
+        $markerCharacters = null;
         for ($i = 0; $i < (strlen($inputString) - $markerLength); $i++) {
             $markerCharacters = [];
             for ($j = 0; $j < $markerLength; $j++) {
