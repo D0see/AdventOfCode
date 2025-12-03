@@ -17,7 +17,7 @@
 
     // PART 1
     foreach ($ranges as [$start, $end]) {
-        for ($i = $start; $i < $end; $i++) {
+        for ($i = $start; $i <= $end; $i++) {
 
             $temp = (string) $i;
             if (strlen($temp) % 2) continue;
@@ -33,10 +33,23 @@
     echo '<br>';
 
     // PART 2
+
+    $result = 0;
     foreach ($ranges as [$start, $end]) {
-        for ($i = $start; $i < $end; $i++) {
+        for ($i = $start; $i <= $end; $i++) {
             $temp = (string) $i;
-            
+
+            for ($j = 1; $j <= strlen($temp) / 2; $j++) {
+                $arr = str_split($temp, $j);
+                // echo json_encode($arr) . '<br>';
+                if (count(array_unique($arr)) === 1) {
+                    $result += $i;
+                    break;
+                }
+            }
         }
     }
+
+    echo $result;
+
 
