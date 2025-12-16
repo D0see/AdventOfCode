@@ -47,12 +47,15 @@
     // PART 2
     $result = 0;
 
-    $removedRolls = -1;
+    $removedARollLastIter = true;
 
-    while($removedRolls !== 0) {
-        $removedRolls = 0;
+    while($removedARollLastIter) {
+
+        $removedARollLastIter = false;
+        
         for ($y = 0; $y < count($inputArr); $y++) {
             for ($x = 0; $x < count($inputArr[0]); $x++) {
+
                 if ($inputArr[$y][$x] !== '@') continue;
 
                 $adjacencyScore = 0;
@@ -71,13 +74,12 @@
                     ) continue;
 
                     if ($inputArr[$y + $yOffset][$x + $xOffset] === '@') $adjacencyScore++;
-
                 }
                 
                 if ($adjacencyScore < 4) {
                     $result++;
+                    $removedARollLastIter = true;
                     $inputArr[$y][$x] = '.';
-                    $removedRolls++;
                 }
             }
         }
