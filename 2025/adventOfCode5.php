@@ -67,7 +67,4 @@
 
     $result = array_reduce($mergedRanges, fn($acc, $range) => $acc + $range[1] - $range[0] + 1, 0);
 
-    echo $result;
-
-    
-    
+    echo $result; 
