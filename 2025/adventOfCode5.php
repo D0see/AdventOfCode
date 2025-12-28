@@ -29,22 +29,18 @@
 
     foreach ($ranges as [$rangeStart, $rangeEnd]) {
 
-        $merged = false;
-
         for ($i = 0; $i < count($mergedRanges); $i++) {
-
-            if ($merged) break;
 
             [$mergedRangeStart, $mergedRangeEnd] = $mergedRanges[$i];
 
             if ($rangeStart <= $mergedRangeEnd && $rangeEnd >= $mergedRangeStart) {
                 $mergedRanges[$i][0] = min($rangeStart, $mergedRangeStart);
                 $mergedRanges[$i][1] = max($rangeEnd, $mergedRangeEnd);
-                $merged = true;
+                continue 2;
             }
         }
 
-        if (!$merged) array_push($mergedRanges, [$rangeStart, $rangeEnd]);
+        array_push($mergedRanges, [$rangeStart, $rangeEnd]);
 
     }
 
