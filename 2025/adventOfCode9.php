@@ -69,10 +69,12 @@
     //     ITS IMPORTANT TO NOT STOP DRAWING THESE LAST LINES IF YOU CROSS ANOTHER ONE WHILE DRAWING IT -> theses lines are marked with a - 'O'
     // - from there we try to build every rectangles between two points that can yield a bigger area than the largest one
     // - we need to check that when we walk around a rectangle we cross at least one 'O' (avoids the snail edge case)
+    // TODO : make it so a O line is only drawn if it passes an uneven number of X line b
     // the funny thing is, this solution wouldnt work as if we had only 4 points
 
+
     ini_set('memory_limit', '-1');
-    
+
     //here we get the max points values
     $maxX = 0;
     $maxY = 0;
@@ -291,3 +293,10 @@
     // }
 
     echo $largestRectangle;
+
+    // \===========/ 4th idea : \===========/
+    // i could rebuild the 3rd solution but without placing tiles in a two dArr :
+    // - i could build ranges of tiles for every x and y positions where there is a point :
+    //     - so XtilesRangesX = [Y => [[start, end], [start, end]], XtilesRangesY = [X => [[start, end], [start, end]]
+    //     - OtilesRangesX = [Y => [[start, end], [start, end]], OtilesRangesY = [X => [[start, end], [start, end]]
+    // then when we "walk the triangle" we just check that its side are covered by both the OtilesRanges and XtilesRanges
