@@ -20,7 +20,7 @@
         $formattedInput['buttons'] = [];
 
         foreach (array_slice(str_split($rawInput[0]), 1, strlen($rawInput[0]) - 2) as $char) {
-            $formattedInput['endState'] .= $char === '#' ? '1' : 0;
+            $formattedInput['endState'] .= $char === '#' ? '1' : '0';
         }
 
         for ($i = 1; $i <= count($rawInput) - 2; $i++) {
