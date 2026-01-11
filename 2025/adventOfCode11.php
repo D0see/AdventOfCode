@@ -24,12 +24,12 @@
         $map[$tag] = $links;
     }
 
-    function countPathToEnd(array &$map, string $currTag, string $end, array &$connectionsToEndMap = []): array {
+    function countPathToEnd(array &$map, string $currTag, string $end, array &$connectionsToEndMap = []): int {
 
         $result = 0; 
 
         if (isset($connectionsToEndMap[$currTag])) {
-            return [$connectionsToEndMap[$currTag], $connectionsToEndMap];
+            return $connectionsToEndMap[$currTag];
         }
 
         foreach ($map[$currTag] as $tag) {
@@ -39,24 +39,24 @@
                 continue;
             } else if ($tag === 'out') continue;
 
-            $result += countPathToEnd($map, $tag, $end, $connectionsToEndMap)[0];
+            $result += countPathToEnd($map, $tag, $end, $connectionsToEndMap);
         }
 
         $connectionsToEndMap[$currTag] = $result;
 
-        return [$result, $connectionsToEndMap];
+        return $result;
 
     }
 
-    if (isset($map['you'])) echo countPathToEnd($map, 'you', 'out')[0] . '<br>';
+    echo countPathToEnd($map, 'you', 'out');
+    echo  '<br>';
 
     // PART 2
 
-    $svrToFtt = countPathToEnd($map, 'svr', 'fft')[0];
-    $fftToDac = countPathToEnd($map, 'fft', 'dac')[0];
-    $dacToOut = countPathToEnd($map, 'dac', 'out')[0];
-    
-    echo $svrToFtt * $fftToDac * $dacToOut;
-
+    echo array_reduce([
+        countPathToEnd($map, 'svr', 'fft'),
+        countPathToEnd($map, 'fft', 'dac'),
+        countPathToEnd($map, 'dac', 'out')
+    ], fn($acc, $num) => $acc * $num, 1);
 ?>
 
