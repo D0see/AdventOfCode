@@ -102,7 +102,7 @@
 
     $result = 0;
 
-    // foreach($machines as ['endState' => $endState, 'buttons' => $buttons, 'voltages' => $voltages]) {
+    // foreach($machines as ['endState' => $endState, 'buttons' => $buttons]) {
     //     $initialState = implode(array_fill(0, strlen($endState), '0'));
 
     //     $queue = [];
@@ -116,58 +116,55 @@
 
     //PART 2
 
-    function isVoltageInvalid(array $voltage, array $endVoltage): bool {
-        for($i = 0; $i < count($voltage); $i++) {
-            if ($voltage[$i] > $endVoltage[$i]) return true;
-        }
-        return false;
+    function getFewestNeededPressesForVoltages(
+        array &$voltages, 
+        array &$buttons, 
+        array $currentState, 
+        int $currPresses = 0, 
+        array &$memo = []) {
+
+        $currStateStringified = implode('-', $currentState);
+
+        // do a greedy algorithm, biggest buttons first
+
+        // memoize the number of button press for each state [0,0,0] => [1, 2, 3] = 2 for example
+
+        // only keep going into branches for which we have no values
+
+        // compute the difference between the desired endstate and our current state and check if we have a result in the memo for it
     }
 
-    function addNextVoltage(array $button, array $voltage) {
-        foreach(array_keys($button) as $key) {
-            $voltage[$key]++;
+    function calcNextVoltage($button, $currVoltage) {
+        for ($i = 0; $i < count($button); $i++) {
+            $currVoltage[$button[$i]]++;
         }
-        return $voltage;
+        return $currVoltage;
     }
 
-    function greedySolver(array $currButton, array $currVoltage, array $endVoltage, array $sortedButtons, $presses = 0, &$result = [null]) {
-
-        $nextVoltage = addNextVoltage($currButton, $currVoltage);
-
-        if (isVoltageInvalid($nextVoltage, $endVoltage)) return $result[0];
-
-        if ($result[0] !== null) return $result[0];
-
-        if ($nextVoltage === $endVoltage) { 
-            $result[0] = $presses + 1;
-            return $result[0];
+    function voltageIsValid($currVoltage, $endVoltage) {
+        for ($i = 0; $i < count($endVoltage); $i++) {
+            if ($currVoltage[$i] > $endVoltage[$i]) return false;
         }
-
-        foreach($sortedButtons as $index => $button) {
-            greedySolver($button, $nextVoltage, $endVoltage, array_slice($sortedButtons, $index), $presses + 1, $result);
-        }
-
-        return $result[0];
+        return true;
     }
 
-    $result = 0;
-
-    foreach($machines as ['endState' => $endState, 'buttons' => $buttons, 'voltages' => $voltages]) {
-
-        $sortedButtons = $buttons;
-
-        usort($sortedButtons, fn($a, $b) => count($b) - count($a));
-
-        $startingVoltage = array_fill(0, count($voltages), 0);
-
-        $min = -1;
-        foreach($buttons as $index => $button) {
-            $min = greedySolver($button, $startingVoltage, $voltages, array_slice($sortedButtons, $index));
-            if ($min !== -1) break; 
+    function voltageIsCorrect($currVoltage, $endVoltage) {
+        for ($i = 0; $i < count($endVoltage); $i++) {
+            if ($currVoltage[$i] !== $endVoltage[$i]) return false;
         }
-
-        echo $min . '<br>';
-        $result += $min;
+        return true;
     }
 
+    foreach($machines as ['buttons' => $buttons, 'voltages' => $voltages]) {
+        $initialState = array_fill(0, count($voltages), 0);
+        $buttons = array_map(fn($button) => array_keys($button), $buttons);
+        usort($buttons, fn($a, $b) => count($b) - count($a));
+
+        echo json_encode($buttons);
+
+        $result += getFewestNeededPressesForVoltages($voltages, $buttons, $initialState);
+
+        
+    }
+    
     echo $result;
